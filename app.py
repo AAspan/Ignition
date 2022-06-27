@@ -23,5 +23,12 @@ def event():
 def alerts():
     return render_template('alerts.html')
 
+
+#Admin
+@app.route('/admin')
+def admin():
+    return render_template('admin/index.html')
+
+
 if __name__ == '__main__':
     app.run(debug=True)
