@@ -8,7 +8,7 @@ config = {
     "apiKey": "",
     "authDomain": "",
     "databaseURL": "",
-    "projectId": "",
+    "projectId": "ignition-1bf3e",
     "storageBucket": "",
     "messagingSenderId": "",
     "appId": ""
@@ -23,6 +23,10 @@ def home():
 def jobs():
     return render_template('jobs.html')
 
+@app.route('/profile')
+def profile():
+    return render_template('profile.html')
+
 @app.route('/event')
 def event():
     return render_template('event.html')
@@ -36,18 +40,18 @@ def alerts():
 firebase = pyrebase.initialize_app(config)
 auth = firebase.auth()
 
-@app.route('/profile', methods=['GET', 'POST'])
-def profile():
+@app.route('/login', methods=['GET', 'POST'])
+def login():
     if (request.method == 'POST'):
             email = request.form['name']
             password = request.form['password']
             try:
                 auth.sign_in_with_email_and_password(email, password)
-                return render_template('client.html')
+                return render_template('hometwo.html')
             except:
                 unsuccessful = 'Please check your credentials'
-                return render_template('profile.html', umessage=unsuccessful)
-    return render_template('profile.html')# once loged in stays here(create log out)
+                return render_template('login.html', umessage=unsuccessful)
+    return render_template('login.html')# once loged in stays here(create log out)
 
 @app.route('/createaccount', methods=['GET', 'POST'])
 def createaccount():
@@ -66,9 +70,9 @@ def forgotpassword():
             return render_template('profile.html')
     return render_template('forgotpassword.html')
 
-@app.route('/client', methods=['GET', 'POST'])
-def client():
-    return render_template('client.html')
+@app.route('/hometwo', methods=['GET', 'POST'])
+def hometwo():
+    return render_template('hometwo.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
