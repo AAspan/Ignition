@@ -5,13 +5,13 @@ import html
 from flask import Flask, render_template
 
 config = {
-    "apiKey": "",
-    "authDomain": "",
-    "databaseURL": "",
+    "apiKey": "AIzaSyAdd9FxfkdRtucyyGCY0ShlyklvzyqrdRs",
+    "authDomain": "ignition-1bf3e.firebaseapp.com",
+    "databaseURL": "https://ignition-1bf3e-default-rtdb.firebaseio.com",
     "projectId": "ignition-1bf3e",
-    "storageBucket": "",
-    "messagingSenderId": "",
-    "appId": ""
+    "storageBucket": "ignition-1bf3e.appspot.com",
+    "messagingSenderId": "74076369865",
+    "appId": "1:74076369865:web:ffd34b99a10b0a08236e18"
 }
 app = Flask(__name__)
 
@@ -67,7 +67,7 @@ def forgotpassword():
     if (request.method == 'POST'):
             email = request.form['name']
             auth.send_password_reset_email(email)
-            return render_template('profile.html')
+            return render_template('login.html')
     return render_template('forgotpassword.html')
 
 @app.route('/hometwo', methods=['GET', 'POST'])
