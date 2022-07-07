@@ -1,17 +1,17 @@
 import html
-
 from flask import Flask, render_template, request
 from flask_mysqldb import MySQL
 
 app = Flask(__name__)
 
 #Database configuration 
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'ignition'
+app.config['MYSQL_HOST'] = '156.67.73.51'
+app.config['MYSQL_USER'] = 'u359363630_ignition'
+app.config['MYSQL_PASSWORD'] = '2;rRRya0yH'
+app.config['MYSQL_DB'] = 'u359363630_ignition'
 
 mysql = MySQL(app)
+
 
 
 @app.route('/')
@@ -35,35 +35,15 @@ def alerts():
     return render_template('alerts.html')
 
 
-#Admin
+#Admin Home page
 @app.route('/admin')
 def admin():
 
-    #if request.method == 'GET':
-    #    return "Login via the login Form"
-
-    #name = request.form['name']
-    #age = request.form['age']
-
     cursor = mysql.connection.cursor()
     cursor.execute('SELECT * FROM job')
     rv = cursor.fetchall()
+    return render_template('admin/dashboard.html')
 
-    #return str(rv)
-
-    return render_template('admin/index.html')
-
-
-
-#post a job
-@app.route('/admin/postjob')
-def formpostjob():
-
-    cursor = mysql.connection.cursor()
-    cursor.execute('SELECT * FROM job')
-    rv = cursor.fetchall()
-
-    return render_template('admin/post_job.html')
 
 #Dashboard
 @app.route('/admin/dashboard')
@@ -74,6 +54,52 @@ def dashboard():
     rv = cursor.fetchall()
 
     return render_template('admin/dashboard.html', title = title)
+
+
+#post a job form by a company
+@app.route('/admin/job-form')
+def formpostjob():
+
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM job')
+    rv = cursor.fetchall()
+
+    print(rv)
+
+    return render_template('admin/job-form.html')
+
+
+
+#post a job form by a company
+@app.route('/admin/job-list')
+def listpostjob():
+
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM job')
+    rv = cursor.fetchall()
+
+    print(rv)
+
+    return render_template('admin/job-list.html')
+
+
+#Show applications list 
+@app.route('/admin/my-applications')
+def myapplications():
+    #cursor = mysql.connection.cursor()
+    #cursor.execute('SELECT * FROM application')
+    #rv = cursor.fetchall()
+    return render_template('admin/applications.html')
+
+
+
+#Show applications list 
+@app.route('/admin/my-profile')
+def myprofile():
+    #cursor = mysql.connection.cursor()
+    #cursor.execute('SELECT * FROM application')
+    #rv = cursor.fetchall()
+    return render_template('admin/profile-candidate.html')
 
 
 
