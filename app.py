@@ -7,20 +7,20 @@ from flask_mysqldb import MySQL
 
 app = Flask(__name__)
 #Database configuration 
-app.config['MYSQL_HOST'] = '156.67.73.51'
-app.config['MYSQL_USER'] = 'u359363630_ignition'
-app.config['MYSQL_PASSWORD'] = '2;rRRya0yH'
-app.config['MYSQL_DB'] = 'u359363630_ignition'
+app.config['MYSQL_HOST'] = ''
+app.config['MYSQL_USER'] = ''
+app.config['MYSQL_PASSWORD'] = ''
+app.config['MYSQL_DB'] = ''
 
 mysql = MySQL(app)
 config = {
-    "apiKey": "AIzaSyAdd9FxfkdRtucyyGCY0ShlyklvzyqrdRs",
-    "authDomain": "ignition-1bf3e.firebaseapp.com",
-    "databaseURL": "https://ignition-1bf3e-default-rtdb.firebaseio.com/",
-    "projectId": "ignition-1bf3e",
-    "storageBucket": "ignition-1bf3e.appspot.com",
-    "messagingSenderId": "74076369865",
-    "appId": "1:74076369865:web:ffd34b99a10b0a08236e18"
+    "apiKey": "",
+    "authDomain": "",
+    "databaseURL": "",
+    "projectId": "",
+    "storageBucket": "",
+    "messagingSenderId": "",
+    "appId": ""
 }
 
 @app.route('/')
