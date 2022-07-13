@@ -2,17 +2,25 @@ import pyrebase
 from flask import render_template, request, redirect, session
 import os
 import html
+import yaml
 from flask import Flask, render_template
 from flask_mysqldb import MySQL
 
 app = Flask(__name__)
-#Database configuration 
-app.config['MYSQL_HOST'] = ''
-app.config['MYSQL_USER'] = ''
-app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = ''
 
+#Load configuration file from yaml file
+with open('db_config.yml', 'r') as file:
+    db_config = yaml.safe_load(file)
+
+print(db_config['database'])
+
+#Database configuration 
+app.config['MYSQL_HOST'] = db_config['host']
+app.config['MYSQL_USER'] = db_config['user']
+app.config['MYSQL_PASSWORD'] = db_config['password']
+app.config['MYSQL_DB'] = db_config['database']
 mysql = MySQL(app)
+
 config = {
     "apiKey": "",
     "authDomain": "",
@@ -86,36 +94,18 @@ def forgotpassword():
 @app.route('/hometwo', methods=['GET', 'POST'])
 def hometwo():
     return render_template('hometwo.html')
-    
-#Admin
+ 
+
+ 
+#Admin Home page
 @app.route('/admin')
 def admin():
 
-    #if request.method == 'GET':
-    #    return "Login via the login Form"
-
-    #name = request.form['name']
-    #age = request.form['age']
-
     cursor = mysql.connection.cursor()
     cursor.execute('SELECT * FROM job')
     rv = cursor.fetchall()
+    return render_template('admin/dashboard.html')
 
-    #return str(rv)
-
-    return render_template('admin/index.html')
-
-
-
-#post a job
-@app.route('/admin/postjob')
-def formpostjob():
-
-    cursor = mysql.connection.cursor()
-    cursor.execute('SELECT * FROM job')
-    rv = cursor.fetchall()
-
-    return render_template('admin/post_job.html')
 
 #Dashboard
 @app.route('/admin/dashboard')
@@ -126,6 +116,53 @@ def dashboard():
     rv = cursor.fetchall()
 
     return render_template('admin/dashboard.html', title = title)
+
+
+#post a job form by a company
+@app.route('/admin/job-form')
+def formpostjob():
+
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM job')
+    rv = cursor.fetchall()
+
+    print(rv)
+
+    return render_template('admin/job-form.html')
+
+
+
+#post a job form by a company
+@app.route('/admin/job-list')
+def listpostjob():
+
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM job')
+    rv = cursor.fetchall()
+
+    print(rv)
+
+    return render_template('admin/job-list.html')
+
+
+#Show applications list 
+@app.route('/admin/my-applications')
+def myapplications():
+    #cursor = mysql.connection.cursor()
+    #cursor.execute('SELECT * FROM application')
+    #rv = cursor.fetchall()
+    return render_template('admin/applications.html')
+
+
+
+#Show applications list 
+@app.route('/admin/my-profile')
+def myprofile():
+    #cursor = mysql.connection.cursor()
+    #cursor.execute('SELECT * FROM application')
+    #rv = cursor.fetchall()
+    return render_template('admin/profile-candidate.html')
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
