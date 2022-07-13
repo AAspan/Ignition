@@ -1,0 +1,53 @@
+{% extends 'admin/admin-layout.html' %}
+
+{% block content %}
+
+<h1> Post a Job </h1>
+<h3> Form to post a job. </h3>
+
+<form>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="inputEmail4">Title</label>
+            <input type="title" class="form-control" id="title" placeholder="Software Engineer">
+        </div>
+
+    </div>
+   
+    <div class="form-row">
+        
+        <div class="form-group col-md-6">
+            <label for="inputCity">Location</label>
+            <input type="text" class="form-control" id="location">
+        </div>
+
+        <div class="form-group col-md-4">
+            <label for="inputState">Job type</label>
+            <select id="inputState" class="form-control">
+                <option> Full time </option>
+                <option> Part-time</option>
+
+            </select>
+        </div>
+
+    </div>
+    
+    <div class="form-group">
+        <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="gridCheck">
+        <label class="form-check-label" for="gridCheck">
+            Remote
+        </label>
+        </div>
+    </div>
+
+    <div class="form-group col-md-4">
+        <label for="inputState">Description</label>
+        <textarea name="description" class="form-control" heigh="500"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+
+{% endblock %}
