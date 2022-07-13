@@ -1,5 +1,19 @@
-{% extends 'base.html' %}
+<head>
+    <link rel="stylesheet" href="static/style.css">
+    <img src="/static/images/ignition logo.png" alt="ignition logo"style="width:300px;height:150px;">
+</head>
 
+<nav>
+    <a href="/home">Home</a>
+    <a href="/event">Event</a>
+    <a href="/alerts">Alerts</a>
+    <a href="/jobs">jobs</a>
+    <a href="/profile">Profile</a>
+    <a href="/login">Log Out</a>
+    
+    <div class="animation start-home"></div>
+</nav>
+{% extends '/admin-layout.html' %}
 {% block content %}
 
 <h1> Events Page </h1>
