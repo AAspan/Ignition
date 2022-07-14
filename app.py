@@ -22,13 +22,13 @@ app.config['MYSQL_DB'] = db_config['database']
 mysql = MySQL(app)
 
 config = {
-    "apiKey": "",
-    "authDomain": "",
-    "databaseURL": "",
-    "projectId": "",
-    "storageBucket": "",
-    "messagingSenderId": "",
-    "appId": ""
+    "apiKey": "AIzaSyAdd9FxfkdRtucyyGCY0ShlyklvzyqrdRs",
+    "authDomain": "ignition-1bf3e.firebaseapp.com",
+    "databaseURL": "https://ignition-1bf3e-default-rtdb.firebaseio.com/",
+    "projectId": "ignition-1bf3e",
+    "storageBucket": "ignition-1bf3e.appspot.com",
+    "messagingSenderId": "74076369865",
+    "appId": "1:74076369865:web:ffd34b99a10b0a08236e18"
 }
 
 
@@ -68,6 +68,8 @@ def login():
             password = request.form['password']
             try:
                 auth.sign_in_with_email_and_password(email, password)
+
+                #Look inside MySQl, Pull up 
                 return render_template('hometwo.html')
             except:
                 unsuccessful = 'Please check your credentials'
@@ -80,6 +82,9 @@ def createaccount():
             email = request.form['name']
             password = request.form['password']
             auth.create_user_with_email_and_password(email, password)
+
+            #Insert the user inside MySQL
+
             return render_template('profile.html')
     return render_template('createaccount.html')
 
@@ -137,12 +142,34 @@ def formpostjob():
 def listpostjob():
 
     cursor = mysql.connection.cursor()
-    cursor.execute('SELECT * FROM job')
+    cursor.execute('SELECT * FROM job ')
     rv = cursor.fetchall()
 
     print(rv)
 
     return render_template('admin/job-list.html')
+
+#post a job form by a company
+@app.route('/admin/add-job', methods = ['POST'])
+def addjob():
+
+    if request.method == 'POST':
+        result = request.form
+
+        print(result)
+        title = request.form.get("title")
+        print(title)
+
+
+    #Insert Job inside the database
+
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM job ')
+    rv = cursor.fetchall()
+
+    #print(rv)
+
+    #return render_template('admin/job-list.html')
 
 
 #Show applications list 

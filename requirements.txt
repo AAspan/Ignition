@@ -36,3 +36,5 @@ requests-toolbelt
 rsa
 six
 Werkzeug
+yaml
+flask_mysqldb
