@@ -157,19 +157,28 @@ def addjob():
         result = request.form
 
         print(result)
+        #Get input from form
         title = request.form.get("title")
+        location = request.form.get("location")
+        jobtype = request.form.get("jobtype")
+        date = request.form.get("date")
+        description = request.form.get("description")
         print(title)
+        
+        #Atempt to perform requestion
+        
+        cursor = mysql.connection.cursor()
+        #Insert Job inside the database
+        sql_req = """INSERT INTO job (title, location, jobtype, description) 
+                                    VALUES (%s, %s, %s, %s)"""
 
+        data = (title, location, jobtype, description)
+        cursor.execute(sql_req, data)
+        cursor.close()
+        #print("MySQL connection is closed")
+    
 
-    #Insert Job inside the database
-
-    cursor = mysql.connection.cursor()
-    cursor.execute('SELECT * FROM job ')
-    rv = cursor.fetchall()
-
-    #print(rv)
-
-    #return render_template('admin/job-list.html')
+    return listpostjob()
 
 
 #Show applications list 
