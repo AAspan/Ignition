@@ -22,13 +22,7 @@ app.config['MYSQL_DB'] = db_config['database']
 mysql = MySQL(app)
 
 config = {
-    "apiKey": "",
-    "authDomain": "",
-    "databaseURL": "",
-    "projectId": "",
-    "storageBucket": "",
-    "messagingSenderId": "",
-    "appId": ""
+   
 }
 
 
