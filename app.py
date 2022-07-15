@@ -5,7 +5,7 @@ import html
 import yaml
 from flask import Flask, render_template
 from flask_mysqldb import MySQL
-
+import datetime
 app = Flask(__name__)
 
 #Load configuration file from yaml file
@@ -126,13 +126,7 @@ def dashboard():
 #post a job form by a company
 @app.route('/admin/job-form')
 def formpostjob():
-
-    cursor = mysql.connection.cursor()
-    cursor.execute('SELECT * FROM job')
-    rv = cursor.fetchall()
-
-    print(rv)
-
+    
     return render_template('admin/job-form.html')
 
 
@@ -150,34 +144,42 @@ def listpostjob():
     return render_template('admin/job-list.html')
 
 #post a job form by a company
-@app.route('/admin/add-job', methods = ['POST'])
+@app.route('/admin/add-job', methods = ['POST', 'GET'])
 def addjob():
 
-    if request.method == 'POST':
-        result = request.form
+    if request.method == 'GET':
+        return formpostjob()
 
-        print(result)
+
+    if request.method == 'POST':
+        
         #Get input from form
         title = request.form.get("title")
         location = request.form.get("location")
         jobtype = request.form.get("jobtype")
-        date = request.form.get("date")
+
+        #Treament of the date
+        date = request.form.get("expiration_date")
+        dt = date.split("-")
+
+        print(dt)
+
+        date_str = dt[0] +"-"+ dt[1] + "-"+ dt[2] + " 00:00:00" #datetime of expiration
+        company_id = 1
         description = request.form.get("description")
-        print(title)
         
         #Atempt to perform requestion
-        
         cursor = mysql.connection.cursor()
         #Insert Job inside the database
-        sql_req = """INSERT INTO job (title, location, jobtype, description) 
-                                    VALUES (%s, %s, %s, %s)"""
+        sql_req = """INSERT INTO job (title, location, jobtype, company_id, expiration, description) 
+                                    VALUES (%s, %s, %s, %s, %s, %s)"""
 
-        data = (title, location, jobtype, description)
+        data = (title, location, jobtype, company_id, date_str, description)
+        
         cursor.execute(sql_req, data)
         cursor.close()
-        #print("MySQL connection is closed")
+        print("MySQL connection is closed")
     
-
     return listpostjob()
 
 
