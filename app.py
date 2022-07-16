@@ -79,11 +79,22 @@ def login():
 @app.route('/createaccount', methods=['GET', 'POST'])
 def createaccount():
     if (request.method == 'POST'):
-            email = request.form['name']
-            password = request.form['password']
-            auth.create_user_with_email_and_password(email, password)
-
+        email = request.form['name']
+        password = request.form['password']
+        
+        if(auth.create_user_with_email_and_password(email, password)):
+            
             #Insert the user inside MySQL
+            #We can specify the role to make the distinction between candidate and recruiter
+            cursor = mysql.connection.cursor()
+            sql_req = """INSERT INTO user (email,password) 
+                                        VALUES (%s, %s)"""                
+            data = (email, password) #Password is not encrypted for now
+            cursor.execute(sql_req, data)
+            cursor.close()
+            print("Registration successful. MySQL connection is closed")
+
+            
 
             return render_template('profile.html')
     return render_template('createaccount.html')
