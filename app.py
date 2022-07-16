@@ -22,13 +22,7 @@ app.config['MYSQL_DB'] = db_config['database']
 mysql = MySQL(app)
 
 config = {
-    "apiKey": "AIzaSyAdd9FxfkdRtucyyGCY0ShlyklvzyqrdRs",
-    "authDomain": "ignition-1bf3e.firebaseapp.com",
-    "databaseURL": "https://ignition-1bf3e-default-rtdb.firebaseio.com/",
-    "projectId": "ignition-1bf3e",
-    "storageBucket": "ignition-1bf3e.appspot.com",
-    "messagingSenderId": "74076369865",
-    "appId": "1:74076369865:web:ffd34b99a10b0a08236e18"
+   
 }
 
 
