@@ -5,7 +5,7 @@ import html
 import yaml
 from flask import Flask, render_template
 from flask_mysqldb import MySQL
-import datetime
+
 app = Flask(__name__)
 
 #Load configuration file from yaml file
@@ -22,7 +22,7 @@ app.config['MYSQL_DB'] = db_config['database']
 mysql = MySQL(app)
 
 config = {
-   
+
 }
 
 
@@ -62,8 +62,6 @@ def login():
             password = request.form['password']
             try:
                 auth.sign_in_with_email_and_password(email, password)
-
-                #Look inside MySQl, Pull up 
                 return render_template('hometwo.html')
             except:
                 unsuccessful = 'Please check your credentials'
@@ -73,23 +71,9 @@ def login():
 @app.route('/createaccount', methods=['GET', 'POST'])
 def createaccount():
     if (request.method == 'POST'):
-        email = request.form['name']
-        password = request.form['password']
-        
-        if(auth.create_user_with_email_and_password(email, password)):
-            
-            #Insert the user inside MySQL
-            #We can specify the role to make the distinction between candidate and recruiter
-            cursor = mysql.connection.cursor()
-            sql_req = """INSERT INTO user (email,password) 
-                                        VALUES (%s, %s)"""                
-            data = (email, password) #Password is not encrypted for now
-            cursor.execute(sql_req, data)
-            cursor.close()
-            print("Registration successful. MySQL connection is closed")
-
-            
-
+            email = request.form['name']
+            password = request.form['password']
+            auth.create_user_with_email_and_password(email, password)
             return render_template('profile.html')
     return render_template('createaccount.html')
 
@@ -131,7 +115,13 @@ def dashboard():
 #post a job form by a company
 @app.route('/admin/job-form')
 def formpostjob():
-    
+
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM job')
+    rv = cursor.fetchall()
+
+    print(rv)
+
     return render_template('admin/job-form.html')
 
 
@@ -141,51 +131,12 @@ def formpostjob():
 def listpostjob():
 
     cursor = mysql.connection.cursor()
-    cursor.execute('SELECT * FROM job ')
+    cursor.execute('SELECT * FROM job')
     rv = cursor.fetchall()
 
     print(rv)
 
     return render_template('admin/job-list.html')
-
-#post a job form by a company
-@app.route('/admin/add-job', methods = ['POST', 'GET'])
-def addjob():
-
-    if request.method == 'GET':
-        return formpostjob()
-
-
-    if request.method == 'POST':
-        
-        #Get input from form
-        title = request.form.get("title")
-        location = request.form.get("location")
-        jobtype = request.form.get("jobtype")
-
-        #Treament of the date
-        date = request.form.get("expiration_date")
-        dt = date.split("-")
-
-        print(dt)
-
-        date_str = dt[0] +"-"+ dt[1] + "-"+ dt[2] + " 00:00:00" #datetime of expiration
-        company_id = 1
-        description = request.form.get("description")
-        
-        #Atempt to perform requestion
-        cursor = mysql.connection.cursor()
-        #Insert Job inside the database
-        sql_req = """INSERT INTO job (title, location, jobtype, company_id, expiration, description) 
-                                    VALUES (%s, %s, %s, %s, %s, %s)"""
-
-        data = (title, location, jobtype, company_id, date_str, description)
-        
-        cursor.execute(sql_req, data)
-        cursor.close()
-        print("MySQL connection is closed")
-    
-    return listpostjob()
 
 
 #Show applications list 
