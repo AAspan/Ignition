@@ -206,8 +206,12 @@ def applications(job_id):
     #cursor.execute(sql_req, data)
     result = cursor.fetchall()
     print(result)
-    return "ok"
-    #return render_template('admin/applications.html', applications=result)
+
+    for item in result:
+        print(item)
+
+    #return "ok"
+    return render_template('admin/applications.html', applications=result)
 
 #Show applications list 
 @app.route('/admin/my-profile')
