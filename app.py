@@ -1,8 +1,9 @@
 import pyrebase
-from flask import render_template, request, redirect, session
+from flask import render_template, request, redirect, session,url_for,flash
 import os
 import html
 import yaml
+from functools import wraps
 from flask import Flask, render_template
 from flask_mysqldb import MySQL
 
@@ -21,15 +22,17 @@ app.config['MYSQL_PASSWORD'] = db_config['password']
 app.config['MYSQL_DB'] = db_config['database']
 mysql = MySQL(app)
 
+
 config = {
-    "apiKey": "",
-    "authDomain": "",
-    "databaseURL": "",
+    "apiKey": "AIzaSyAdd9FxfkdRtucyyGCY0ShlyklvzyqrdRs",
+    "authDomain": "ignition-1bf3e.firebaseapp.com",
+    "databaseURL": "https://ignition-1bf3e-default-rtdb.firebaseio.com/",
     "projectId": "ignition-1bf3e",
-    "storageBucket": "",
-    "messagingSenderId": "",
-    "appId": ""
+    "storageBucket": "ignition-1bf3e.appspot.com",
+    "messagingSenderId": "74076369865",
+    "appId": "1:74076369865:web:ffd34b99a10b0a08236e18"
 }
+
 
 
 @app.route('/')
@@ -95,8 +98,67 @@ def forgotpassword():
 def hometwo():
     return render_template('hometwo.html')
  
+#Login mysql
+@app.route('/loginemp',methods=['POST','GET'])
+def loginemp():
+    status=True
+    if request.method=='POST':
+        email=request.form["email"]
+        pwd=request.form["password"]
+        cur=mysql.connection.cursor()
+        cur.execute("select * from user where EMAIL=%s and PASSWORD=%s",(email,pwd))
+        data=cur.fetchone()
+        if data:
+            session['logged_in']=True
+            session['username']=data["NAME"]
+            flash('Login Successfully','success')
+            return redirect('profile')
+        else:
+            flash('Invalid Login. Try Again','danger')
+    return render_template("loginemp.html")
+  
+#check if user logged in
+def is_logged_in(f):
+	@wraps(f)
+	def wrap(*args,**kwargs):
+		if 'logged_in' in session:
+			return f(*args,**kwargs)
+		else:
+			flash('Unauthorized, Please Login','danger')
+			return redirect(url_for('loginemp'))
+	return wrap
+  
+#Registration  
+@app.route('/reg',methods=['POST','GET'])
+def reg():
+    status=False
+    if request.method=='POST':
+        name=request.form["name"]
+        email=request.form["email"]
+        pwd=request.form["password"]
+        cur=mysql.connection.cursor()
+        cur.execute("insert into user(name,password,email) values(%s,%s,%s)",(name,pwd,email))
+        mysql.connection.commit()
+        cur.close()
+        flash('Registration Successfully. Login Here...','success')
+        return redirect('login')
+    return render_template("reg.html",status=status)
 
+#Home page
+#@app.route("/home")
+#@is_logged_in
+#def home():
+	#return render_template('home.html')
+    
+#logout end o gmysql log in/out
+@app.route("/logout")
+def logout():
+	session.clear()
+	flash('You are now logged out','success')
+	return redirect(url_for('login'))
  
+
+
 #Admin Home page
 @app.route('/admin')
 def admin():
