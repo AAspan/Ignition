@@ -8,6 +8,7 @@ from flask import Flask, render_template
 from flask_mysqldb import MySQL
 
 app = Flask(__name__)
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 #Load configuration file from yaml file
 with open('db_config.yml', 'r') as file:
@@ -132,16 +133,22 @@ def is_logged_in(f):
 @app.route('/reg',methods=['POST','GET'])
 def reg():
     status=False
+    print(request)
+
     if request.method=='POST':
-        name=request.form["name"]
+        name=request.form["uname"]
         email=request.form["email"]
-        pwd=request.form["password"]
+        pwd=request.form["upass"]
+
+        print(pwd)
+
         cur=mysql.connection.cursor()
-        cur.execute("insert into user(name,password,email) values(%s,%s,%s)",(name,pwd,email))
+        cur.execute("INSERT INTO user(name,password,email, role) VALUES(%s,%s,%s, %s)",(name,pwd,email, "RECRUITER"))
         mysql.connection.commit()
+
         cur.close()
         flash('Registration Successfully. Login Here...','success')
-        return redirect('login')
+        return redirect('admin')
     return render_template("reg.html",status=status)
 
 #Home page
