@@ -72,7 +72,7 @@ def login():
             password = request.form['password']
             try:
                 auth.sign_in_with_email_and_password(email, password)
-                return render_template('hometwo.html')
+                return render_template('home.html')
             except:
                 unsuccessful = 'Please check your credentials'
                 return render_template('login.html', umessage=unsuccessful)
@@ -105,15 +105,15 @@ def loginemp():
     status=True
     if request.method=='POST':
         email=request.form["email"]
-        pwd=request.form["password"]
+        pwd=request.form["upass"]
         cur=mysql.connection.cursor()
         cur.execute("select * from user where EMAIL=%s and PASSWORD=%s",(email,pwd))
         data=cur.fetchone()
         if data:
             session['logged_in']=True
-            session['username']=data["NAME"]
+            session['username']=data["name"]
             flash('Login Successfully','success')
-            return redirect('profile')
+            return redirect('admin')
         else:
             flash('Invalid Login. Try Again','danger')
     return render_template("loginemp.html")
