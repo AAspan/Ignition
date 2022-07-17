@@ -25,7 +25,7 @@ config = {
     "apiKey": "",
     "authDomain": "",
     "databaseURL": "",
-    "projectId": "",
+    "projectId": "ignition-1bf3e",
     "storageBucket": "",
     "messagingSenderId": "",
     "appId": ""
