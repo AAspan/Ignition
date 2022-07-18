@@ -106,18 +106,19 @@ def loginemp():
     if request.method=='POST':
         email=request.form["email"]
         pwd=request.form["upass"]
+        print(pwd)
         cur=mysql.connection.cursor()
         cur.execute("select * from user where EMAIL=%s and PASSWORD=%s",(email,pwd))
         data=cur.fetchone()
         if data:
             session['logged_in']=True
-            session['username']=data["name"]
+            session['username']=data["NAME"]
             flash('Login Successfully','success')
             return redirect('admin')
         else:
             flash('Invalid Login. Try Again','danger')
     return render_template("loginemp.html")
-  
+
 #check if user logged in
 def is_logged_in(f):
 	@wraps(f)
