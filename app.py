@@ -14,6 +14,8 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 with open('db_config.yml', 'r') as file:
     db_config = yaml.safe_load(file)
 
+with open('firebase_config.yml', 'r') as file:
+    firebase_config = yaml.safe_load(file)
 print(db_config['database'])
 
 #Database configuration 
@@ -25,13 +27,13 @@ mysql = MySQL(app)
 
 
 config = {
-    "apiKey": "AIzaSyAdd9FxfkdRtucyyGCY0ShlyklvzyqrdRs",
-    "authDomain": "ignition-1bf3e.firebaseapp.com",
-    "databaseURL": "https://ignition-1bf3e-default-rtdb.firebaseio.com/",
-    "projectId": "ignition-1bf3e",
-    "storageBucket": "ignition-1bf3e.appspot.com",
-    "messagingSenderId": "74076369865",
-    "appId": "1:74076369865:web:ffd34b99a10b0a08236e18"
+   "apiKey": firebase_config['apiKey'],
+    "authDomain": firebase_config['authDomain'],
+    "databaseURL": firebase_config['databaseURL'],
+    "projectId": firebase_config['projectId'],
+    "storageBucket": firebase_config['storageBucket'],
+    "messagingSenderId": firebase_config['messagingSenderId'],
+    "appId": firebase_config['appId']
 }
 
 
@@ -108,11 +110,11 @@ def loginemp():
         pwd=request.form["upass"]
         print(pwd)
         cur=mysql.connection.cursor()
-        cur.execute("select * from user where EMAIL=%s and PASSWORD=%s",(email,pwd))
+        cur.execute("SELECT * from user where EMAIL=%s and PASSWORD=%s",(email,pwd))
         data=cur.fetchone()
         if data:
             session['logged_in']=True
-            session['username']=data["NAME"]
+            session['username']=data[1]
             flash('Login Successfully','success')
             return redirect('admin')
         else:
