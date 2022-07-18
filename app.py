@@ -1,17 +1,21 @@
 import pyrebase
-from flask import render_template, request, redirect, session
+from flask import render_template, request, redirect, session,url_for,flash
 import os
 import html
 import yaml
+from functools import wraps
 from flask import Flask, render_template
 from flask_mysqldb import MySQL
 import datetime
 app = Flask(__name__)
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 #Load configuration file from yaml file
 with open('db_config.yml', 'r') as file:
     db_config = yaml.safe_load(file)
 
+with open('firebase_config.yml', 'r') as file:
+    firebase_config = yaml.safe_load(file)
 print(db_config['database'])
 
 #Database configuration 
@@ -21,9 +25,17 @@ app.config['MYSQL_PASSWORD'] = db_config['password']
 app.config['MYSQL_DB'] = db_config['database']
 mysql = MySQL(app)
 
+
 config = {
-   
+   "apiKey": firebase_config['apiKey'],
+    "authDomain": firebase_config['authDomain'],
+    "databaseURL": firebase_config['databaseURL'],
+    "projectId": firebase_config['projectId'],
+    "storageBucket": firebase_config['storageBucket'],
+    "messagingSenderId": firebase_config['messagingSenderId'],
+    "appId": firebase_config['appId']
 }
+
 
 
 @app.route('/')
@@ -62,9 +74,7 @@ def login():
             password = request.form['password']
             try:
                 auth.sign_in_with_email_and_password(email, password)
-
-                #Look inside MySQl, Pull up 
-                return render_template('hometwo.html')
+                return render_template('home.html')
             except:
                 unsuccessful = 'Please check your credentials'
                 return render_template('login.html', umessage=unsuccessful)
@@ -105,8 +115,74 @@ def forgotpassword():
 def hometwo():
     return render_template('hometwo.html')
  
+#Login mysql
+@app.route('/loginemp',methods=['POST','GET'])
+def loginemp():
+    status=True
+    if request.method=='POST':
+        email=request.form["email"]
+        pwd=request.form["upass"]
+        print(pwd)
+        cur=mysql.connection.cursor()
+        cur.execute("SELECT * from user where EMAIL=%s and PASSWORD=%s",(email,pwd))
+        data=cur.fetchone()
+        if data:
+            session['logged_in']=True
+            session['username']=data[1]
+            flash('Login Successfully','success')
+            return redirect('admin')
+        else:
+            flash('Invalid Login. Try Again','danger')
+    return render_template("loginemp.html")
 
+#check if user logged in
+def is_logged_in(f):
+	@wraps(f)
+	def wrap(*args,**kwargs):
+		if 'logged_in' in session:
+			return f(*args,**kwargs)
+		else:
+			flash('Unauthorized, Please Login','danger')
+			return redirect(url_for('loginemp'))
+	return wrap
+  
+#Registration  
+@app.route('/reg',methods=['POST','GET'])
+def reg():
+    status=False
+    print(request)
+
+    if request.method=='POST':
+        name=request.form["uname"]
+        email=request.form["email"]
+        pwd=request.form["upass"]
+
+        print(pwd)
+
+        cur=mysql.connection.cursor()
+        cur.execute("INSERT INTO user(name,password,email, role) VALUES(%s,%s,%s, %s)",(name,pwd,email, "RECRUITER"))
+        mysql.connection.commit()
+
+        cur.close()
+        flash('Registration Successfully. Login Here...','success')
+        return redirect('admin')
+    return render_template("reg.html",status=status)
+
+#Home page
+#@app.route("/home")
+#@is_logged_in
+#def home():
+	#return render_template('home.html')
+    
+#logout end o gmysql log in/out
+@app.route("/logout")
+def logout():
+	session.clear()
+	flash('You are now logged out','success')
+	return redirect(url_for('login'))
  
+
+
 #Admin Home page
 @app.route('/admin')
 def admin():
