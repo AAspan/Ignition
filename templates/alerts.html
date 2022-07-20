@@ -2,8 +2,40 @@
 
 {% block content %}
 
-<h1> Alerts Page </h1>
+
+<h1> profile Page </h1>
 <p>Hi, this is Project: Job Board Application  
 Optionally with an Application Tracking System and Human Resources functionalities. </p>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ignition</title>
+    <link rel="stylesheet" href="/static/chat.css">
+  </head>
+  <body>
+    <header>
+      <h2>Make Announcements/Chat/Post news</h2>
+    </header>
+    
+    <div id="chat">
+      <!-- messages will display here -->
+      <ul id="messages"></ul>
+
+      <!-- form to send message -->
+      <form id="message-form">
+        <input id="message-input" type="text" />
+        <button id="message-btn" type="submit">Send</button>
+      </form>
+    </div>
+
+    <!-- scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script>
+    <script src="/static/chat.js"></script>
+  </body>
+</html>
+
 
 {% endblock %}
