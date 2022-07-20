@@ -36,8 +36,6 @@ config = {
     "appId": firebase_config['appId']
 }
 
-
-
 @app.route('/')
 def homelog():
     return render_template('login.html')
@@ -238,25 +236,20 @@ def addjob():
         title = request.form.get("title")
         location = request.form.get("location")
         jobtype = request.form.get("jobtype")
-
+        company_id = 1 #Will need to come from recruiter company_id
+        description = request.form.get("description")
+        
         #Treament of the date
         date = request.form.get("expiration_date")
         dt = date.split("-")
-
-        print(dt)
-
         date_str = dt[0] +"-"+ dt[1] + "-"+ dt[2] + " 00:00:00" #datetime of expiration
-        company_id = 1
-        description = request.form.get("description")
+           
         
-        #Atempt to perform requestion
+        #Atempt to Insert Job inside the database
         cursor = mysql.connection.cursor()
-        #Insert Job inside the database
         sql_req = """INSERT INTO job (title, location, jobtype, company_id, expiration, description) 
                                     VALUES (%s, %s, %s, %s, %s, %s)"""
-
         data = (title, location, jobtype, company_id, date_str, description)
-        
         cursor.execute(sql_req, data)
         cursor.close()
         print("MySQL connection is closed")
@@ -272,7 +265,20 @@ def myapplications():
     #rv = cursor.fetchall()
     return render_template('admin/applications.html')
 
+#Show candidate applications by a recruiter 
+@app.route('/admin/applications/<int:job_id>')
+def applications(job_id):
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM application WHERE job_id = ' + str(job_id) )
+    #cursor.execute(sql_req, data)
+    result = cursor.fetchall()
+    print(result)
 
+    for item in result:
+        print(item)
+
+    #return "ok"
+    return render_template('admin/applications.html', applications=result)
 
 #Show applications list 
 @app.route('/admin/my-profile')
