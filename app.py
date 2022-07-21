@@ -84,10 +84,8 @@ def login():
 def createaccount():
     if (request.method == 'POST'):
         email = request.form['name']
-        password = request.form['password']
-        
-        if(auth.create_user_with_email_and_password(email, password)):
-            
+        password = request.form['password']       
+        if(auth.create_user_with_email_and_password(email, password)):           
             #Insert the user inside MySQL
             #We can specify the role to make the distinction between candidate and recruiter
             cursor = mysql.connection.cursor()
@@ -97,10 +95,9 @@ def createaccount():
             cursor.execute(sql_req, data)
             cursor.close()
             print("Registration successful. MySQL connection is closed")
-
-            
-
             return render_template('profile.html')
+        else:
+            return render_template('createaccount.html')
     return render_template('createaccount.html')
 
 @app.route('/forgotpassword', methods=['GET', 'POST'])
