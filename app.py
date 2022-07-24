@@ -25,13 +25,6 @@ app.config['MYSQL_PASSWORD'] = db_config['password']
 app.config['MYSQL_DB'] = db_config['database']
 mysql = MySQL(app)
 
-<<<<<<< HEAD
-config = {
-
-}
-=======
->>>>>>> f891990fcc8f48fc4bba6bdf06079ea6e2dffaeb
-
 config = {
    "apiKey": firebase_config['apiKey'],
     "authDomain": firebase_config['authDomain'],
@@ -78,11 +71,8 @@ def login():
             password = request.form['password']
             try:
                 auth.sign_in_with_email_and_password(email, password)
-<<<<<<< HEAD
-                return render_template('hometwo.html')
-=======
                 return render_template('home.html')
->>>>>>> f891990fcc8f48fc4bba6bdf06079ea6e2dffaeb
+
             except:
                 unsuccessful = 'Please check your credentials'
                 return render_template('login.html', umessage=unsuccessful)
@@ -224,8 +214,6 @@ def listpostjob():
 
     return render_template('admin/job-list.html')
 
-<<<<<<< HEAD
-=======
 #post a job form by a company
 @app.route('/admin/add-job', methods = ['POST', 'GET'])
 def addjob():
@@ -259,8 +247,6 @@ def addjob():
         print("MySQL connection is closed")
     
     return listpostjob()
-
->>>>>>> f891990fcc8f48fc4bba6bdf06079ea6e2dffaeb
 
 #Show applications list of the Candidate
 @app.route('/admin/my-applications')
