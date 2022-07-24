@@ -6,7 +6,7 @@ import yaml
 from functools import wraps
 from flask import Flask, render_template
 from flask_mysqldb import MySQL
-import datetime
+
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
@@ -25,6 +25,12 @@ app.config['MYSQL_PASSWORD'] = db_config['password']
 app.config['MYSQL_DB'] = db_config['database']
 mysql = MySQL(app)
 
+<<<<<<< HEAD
+config = {
+
+}
+=======
+>>>>>>> f891990fcc8f48fc4bba6bdf06079ea6e2dffaeb
 
 config = {
    "apiKey": firebase_config['apiKey'],
@@ -72,7 +78,11 @@ def login():
             password = request.form['password']
             try:
                 auth.sign_in_with_email_and_password(email, password)
+<<<<<<< HEAD
+                return render_template('hometwo.html')
+=======
                 return render_template('home.html')
+>>>>>>> f891990fcc8f48fc4bba6bdf06079ea6e2dffaeb
             except:
                 unsuccessful = 'Please check your credentials'
                 return render_template('login.html', umessage=unsuccessful)
@@ -81,23 +91,9 @@ def login():
 @app.route('/createaccount', methods=['GET', 'POST'])
 def createaccount():
     if (request.method == 'POST'):
-        email = request.form['name']
-        password = request.form['password']
-        
-        if(auth.create_user_with_email_and_password(email, password)):
-            
-            #Insert the user inside MySQL
-            #We can specify the role to make the distinction between candidate and recruiter
-            cursor = mysql.connection.cursor()
-            sql_req = """INSERT INTO user (email,password) 
-                                        VALUES (%s, %s)"""                
-            data = (email, password) #Password is not encrypted for now
-            cursor.execute(sql_req, data)
-            cursor.close()
-            print("Registration successful. MySQL connection is closed")
-
-            
-
+            email = request.form['name']
+            password = request.form['password']
+            auth.create_user_with_email_and_password(email, password)
             return render_template('profile.html')
     return render_template('createaccount.html')
 
@@ -205,7 +201,13 @@ def dashboard():
 #post a job form by a company
 @app.route('/admin/job-form')
 def formpostjob():
-    
+
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM job')
+    rv = cursor.fetchall()
+
+    print(rv)
+
     return render_template('admin/job-form.html')
 
 
@@ -215,13 +217,15 @@ def formpostjob():
 def listpostjob():
 
     cursor = mysql.connection.cursor()
-    cursor.execute('SELECT * FROM job ')
+    cursor.execute('SELECT * FROM job')
     rv = cursor.fetchall()
 
     print(rv)
 
     return render_template('admin/job-list.html')
 
+<<<<<<< HEAD
+=======
 #post a job form by a company
 @app.route('/admin/add-job', methods = ['POST', 'GET'])
 def addjob():
@@ -256,6 +260,7 @@ def addjob():
     
     return listpostjob()
 
+>>>>>>> f891990fcc8f48fc4bba6bdf06079ea6e2dffaeb
 
 #Show applications list of the Candidate
 @app.route('/admin/my-applications')
