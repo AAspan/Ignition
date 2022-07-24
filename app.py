@@ -262,13 +262,17 @@ def addjob():
 
 >>>>>>> f891990fcc8f48fc4bba6bdf06079ea6e2dffaeb
 
-#Show applications list 
+#Show applications list of the Candidate
 @app.route('/admin/my-applications')
 def myapplications():
-    #cursor = mysql.connection.cursor()
-    #cursor.execute('SELECT * FROM application')
-    #rv = cursor.fetchall()
-    return render_template('admin/applications.html')
+    candidate_id=1 # We should get the candidate id from the session
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM application WHERE candidate_id = ' + str(candidate_id) )
+    #cursor.execute(sql_req, data)
+    result = cursor.fetchall()
+    print(result)
+
+    return render_template('admin/applications.html', applications=result)
 
 #Show candidate applications by a recruiter 
 @app.route('/admin/applications/<int:job_id>')
@@ -282,7 +286,6 @@ def applications(job_id):
     for item in result:
         print(item)
 
-    #return "ok"
     return render_template('admin/applications.html', applications=result)
 
 #Show applications list 
