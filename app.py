@@ -36,8 +36,6 @@ config = {
     "appId": firebase_config['appId']
 }
 
-
-
 @app.route('/')
 def homelog():
     return render_template('login.html')
@@ -177,8 +175,6 @@ def logout():
 	session.clear()
 	flash('You are now logged out','success')
 	return redirect(url_for('login'))
- 
-
 
 #Admin Home page
 @app.route('/admin')
@@ -188,7 +184,6 @@ def admin():
     cursor.execute('SELECT * FROM job')
     rv = cursor.fetchall()
     return render_template('admin/dashboard.html')
-
 
 #Dashboard
 @app.route('/admin/dashboard')
@@ -206,8 +201,6 @@ def dashboard():
 def formpostjob():
     
     return render_template('admin/job-form.html')
-
-
 
 #post a job form by a company
 @app.route('/admin/job-list')
