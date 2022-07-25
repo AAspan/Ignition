@@ -7,8 +7,10 @@ from functools import wraps
 from flask import Flask, render_template
 from flask_mysqldb import MySQL
 
+
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+
 
 #Load configuration file from yaml file
 with open('db_config.yml', 'r') as file:
@@ -43,9 +45,29 @@ def homelog():
 def home():
     return render_template('home.html')
 
+#Show a list of job on the frontend
 @app.route('/jobs')
 def jobs():
-    return render_template('jobs.html')
+
+    #request to get the jobs
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM job')
+    result = cursor.fetchall()
+    
+    return render_template('jobs.html', jobs = result)
+
+#Page to show the job description
+@app.route('/job-description/<int:job_id>')
+def jobdescription(job_id):
+
+    #request to get the jobs
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM job WHERE id=' + str(job_id)  )
+    result = cursor.fetchone()
+    print(result)
+    return render_template('job-description.html', job = result)
+
+
 
 @app.route('/profile')
 def profile():
@@ -69,8 +91,35 @@ def login():
     if (request.method == 'POST'):
             email = request.form['name']
             password = request.form['password']
+
+            print("Email => " + email)
+            print("PAWD : " + password)
             try:
-                auth.sign_in_with_email_and_password(email, password)
+                
+                print("Try to connect")
+                if( auth.sign_in_with_email_and_password(email, password) ): # In case this is successfull
+                    #Store user information into session
+                    print("Starting SQL query")
+                    cursor = mysql.connection.cursor()
+                    cursor.execute("SELECT * from user where email=%s and password=%s",(email,password))
+                    data = cursor.fetchone()
+
+                    print("data => ")
+                    print(data)
+
+                    if data:
+                        session['logged_in']=True
+                        session['user_id']= data[0]
+                        session['username']=data[1]
+                        session['email']=email
+                        session['role']=data[4]
+                        session['company_id']=data[5]
+
+                        print("User ID")
+                        print(session['user_id'])
+
+                
+
                 return render_template('home.html')
 
             except:
@@ -83,7 +132,19 @@ def createaccount():
     if (request.method == 'POST'):
             email = request.form['name']
             password = request.form['password']
-            auth.create_user_with_email_and_password(email, password)
+            
+            if (auth.create_user_with_email_and_password(email, password) ):
+                print("Info User")
+                print(password)
+
+                cur=mysql.connection.cursor()
+                cur.execute("INSERT INTO user(password,email, role) VALUES(%s,%s,%s)",( password,email, "CANDIDATE"))
+                mysql.connection.commit()
+
+                #Save information in session
+                session['email']=email
+                #session['user_id']=1
+
             return render_template('profile.html')
     return render_template('createaccount.html')
 
@@ -171,9 +232,6 @@ def logout():
 @app.route('/admin')
 def admin():
 
-    cursor = mysql.connection.cursor()
-    cursor.execute('SELECT * FROM job')
-    rv = cursor.fetchall()
     return render_template('admin/dashboard.html')
 
 
@@ -234,7 +292,7 @@ def addjob():
         #Treament of the date
         date = request.form.get("expiration_date")
         dt = date.split("-")
-        date_str = dt[0] +"-"+ dt[1] + "-"+ dt[2] + " 00:00:00" #datetime of expiration
+        date_str = dt[0] +"-"+ dt[1] + "-"+ dt[2] + " 00:00:00" #datetime of expiration 2022-07-28 12:00:01
            
         
         #Atempt to Insert Job inside the database
@@ -274,14 +332,23 @@ def applications(job_id):
 
     return render_template('admin/applications.html', applications=result)
 
-#Show applications list 
+#Show profile information 
 @app.route('/admin/my-profile')
 def myprofile():
     #cursor = mysql.connection.cursor()
     #cursor.execute('SELECT * FROM application')
     #rv = cursor.fetchall()
     return render_template('admin/profile-candidate.html')
-    
+
+
+#Show Application form
+@app.route('/apply/<int:job_id>')
+def apply(job_id):
+
+    #request to get job description
+
+    return render_template('apply.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -84,7 +84,7 @@ nav .start-log, a:nth-child(6):hover~.animation {
 body {
   font-size: 12px;
   font-family: sans-serif;
-  background: #2c3e50;
+  /* background: #2c3e50; */
   text-decoration: none;
 }
 /* h1 {
