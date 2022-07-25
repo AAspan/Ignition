@@ -45,7 +45,13 @@ def home():
 
 @app.route('/jobs')
 def jobs():
-    return render_template('jobs.html')
+
+    #request to get the jobs
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM job')
+    result = cursor.fetchall()
+
+    return render_template('jobs.html', jobs = result)
 
 @app.route('/profile')
 def profile():
@@ -71,6 +77,12 @@ def login():
             password = request.form['password']
             try:
                 auth.sign_in_with_email_and_password(email, password)
+                #Store user information into session
+                session['username']=True
+                session['user_id']=1
+                session['email']=1
+
+
                 return render_template('home.html')
 
             except:
@@ -171,9 +183,6 @@ def logout():
 @app.route('/admin')
 def admin():
 
-    cursor = mysql.connection.cursor()
-    cursor.execute('SELECT * FROM job')
-    rv = cursor.fetchall()
     return render_template('admin/dashboard.html')
 
 
@@ -274,14 +283,23 @@ def applications(job_id):
 
     return render_template('admin/applications.html', applications=result)
 
-#Show applications list 
+#Show profile information 
 @app.route('/admin/my-profile')
 def myprofile():
     #cursor = mysql.connection.cursor()
     #cursor.execute('SELECT * FROM application')
     #rv = cursor.fetchall()
     return render_template('admin/profile-candidate.html')
-    
+
+
+#Show Application form
+@app.route('/apply/<int:job_id>')
+def apply(job_id):
+
+    #request to get job description
+
+    return render_template('apply.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
