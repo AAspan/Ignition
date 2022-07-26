@@ -5,7 +5,7 @@ import html
 import yaml
 from functools import wraps
 from flask import Flask, render_template
-from flask_mysqldb import MySQL
+#from flask_mysqldb import MySQL
 
 
 app = Flask(__name__)
@@ -25,7 +25,7 @@ app.config['MYSQL_HOST'] = db_config['host']
 app.config['MYSQL_USER'] = db_config['user']
 app.config['MYSQL_PASSWORD'] = db_config['password']
 app.config['MYSQL_DB'] = db_config['database']
-mysql = MySQL(app)
+#mysql = MySQL(app)
 
 config = {
    "apiKey": firebase_config['apiKey'],
@@ -44,7 +44,7 @@ def homelog():
 @app.route('/home')
 def home():
     return render_template('home.html')
-
+'''
 #Show a list of job on the frontend
 @app.route('/jobs')
 def jobs():
@@ -55,7 +55,9 @@ def jobs():
     result = cursor.fetchall()
     
     return render_template('jobs.html', jobs = result)
+'''
 
+'''
 #Page to show the job description
 @app.route('/job-description/<int:job_id>')
 def jobdescription(job_id):
@@ -67,7 +69,7 @@ def jobdescription(job_id):
     print(result)
     return render_template('job-description.html', job = result)
 
-
+'''
 
 @app.route('/profile')
 def profile():
@@ -85,7 +87,7 @@ def alerts():
 
 #firebase = pyrebase.initialize_app(config)
 #auth = firebase.auth()
-
+'''
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if (request.method == 'POST'):
@@ -155,11 +157,13 @@ def forgotpassword():
             #auth.send_password_reset_email(email)
             return render_template('login.html')
     return render_template('forgotpassword.html')
+'''
 
 @app.route('/hometwo', methods=['GET', 'POST'])
 def hometwo():
     return render_template('hometwo.html')
- 
+
+'''
 #Login mysql
 @app.route('/loginemp',methods=['POST','GET'])
 def loginemp():
@@ -190,7 +194,8 @@ def is_logged_in(f):
 			flash('Unauthorized, Please Login','danger')
 			return redirect(url_for('loginemp'))
 	return wrap
-  
+'''
+''' 
 #Registration  
 @app.route('/reg',methods=['POST','GET'])
 def reg():
@@ -212,6 +217,7 @@ def reg():
         flash('Registration Successfully. Login Here...','success')
         return redirect('admin')
     return render_template("reg.html",status=status)
+'''
 
 #Home page
 #@app.route("/home")
@@ -234,7 +240,7 @@ def admin():
 
     return render_template('admin/dashboard.html')
 
-
+'''
 #Dashboard
 @app.route('/admin/dashboard')
 def dashboard():
@@ -339,7 +345,7 @@ def myprofile():
     #cursor.execute('SELECT * FROM application')
     #rv = cursor.fetchall()
     return render_template('admin/profile-candidate.html')
-
+'''
 
 #Show Application form
 @app.route('/apply/<int:job_id>')
