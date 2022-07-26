@@ -1,4 +1,4 @@
-import pyrebase
+#import pyrebase
 from flask import render_template, request, redirect, session,url_for,flash
 import os
 import html
@@ -83,8 +83,8 @@ def alerts():
 #Authentication
 
 
-firebase = pyrebase.initialize_app(config)
-auth = firebase.auth()
+#firebase = pyrebase.initialize_app(config)
+#auth = firebase.auth()
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -97,26 +97,26 @@ def login():
             try:
                 
                 print("Try to connect")
-                if( auth.sign_in_with_email_and_password(email, password) ): # In case this is successfull
-                    #Store user information into session
-                    print("Starting SQL query")
-                    cursor = mysql.connection.cursor()
-                    cursor.execute("SELECT * from user where email=%s and password=%s",(email,password))
-                    data = cursor.fetchone()
+                #if( auth.sign_in_with_email_and_password(email, password) ): # In case this is successfull
+                #Store user information into session
+                print("Starting SQL query")
+                cursor = mysql.connection.cursor()
+                cursor.execute("SELECT * from user where email=%s and password=%s",(email,password))
+                data = cursor.fetchone()
 
-                    print("data => ")
-                    print(data)
+                print("data => ")
+                print(data)
 
-                    if data:
-                        session['logged_in']=True
-                        session['user_id']= data[0]
-                        session['username']=data[1]
-                        session['email']=email
-                        session['role']=data[4]
-                        session['company_id']=data[5]
+                if data:
+                    session['logged_in']=True
+                    session['user_id']= data[0]
+                    session['username']=data[1]
+                    session['email']=email
+                    session['role']=data[4]
+                    session['company_id']=data[5]
 
-                        print("User ID")
-                        print(session['user_id'])
+                    print("User ID")
+                    print(session['user_id'])
 
                 
 
@@ -133,17 +133,17 @@ def createaccount():
             email = request.form['name']
             password = request.form['password']
             
-            if (auth.create_user_with_email_and_password(email, password) ):
-                print("Info User")
-                print(password)
+            #if (auth.create_user_with_email_and_password(email, password) ):
+            print("Info User")
+            print(password)
 
-                cur=mysql.connection.cursor()
-                cur.execute("INSERT INTO user(password,email, role) VALUES(%s,%s,%s)",( password,email, "CANDIDATE"))
-                mysql.connection.commit()
+            cur=mysql.connection.cursor()
+            cur.execute("INSERT INTO user(password,email, role) VALUES(%s,%s,%s)",( password,email, "CANDIDATE"))
+            mysql.connection.commit()
 
-                #Save information in session
-                session['email']=email
-                #session['user_id']=1
+            #Save information in session
+            session['email']=email
+            #session['user_id']=1
 
             return render_template('profile.html')
     return render_template('createaccount.html')
@@ -152,7 +152,7 @@ def createaccount():
 def forgotpassword():
     if (request.method == 'POST'):
             email = request.form['name']
-            auth.send_password_reset_email(email)
+            #auth.send_password_reset_email(email)
             return render_template('login.html')
     return render_template('forgotpassword.html')
 
