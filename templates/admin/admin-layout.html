@@ -57,17 +57,6 @@
                     <span>Dashboard</span></a>
             </li>
 
-            
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Candidate Menu
-            </div>
-
-            
-
             <!-- Profile -->
             <li class="nav-item">
                 <a class="nav-link" href="/admin/my-profile">
@@ -75,6 +64,14 @@
                     <span>Profile</span>
                 </a>
             </li>
+            
+            {% if session['role'] == "CANDIDATE" %}
+            <!-- Candidate Menu links -->
+            <hr class="sidebar-divider">
+            <div class="sidebar-heading">
+                Candidate Menu
+            </div>
+
 
             <!-- My Applications links -->
             <li class="nav-item">
@@ -82,14 +79,16 @@
                     <i class="fas fa-fw fa-table"></i>
                     <span>My Applications</span></a>
             </li>
+            {% endif %}
+            <!-- End Candidate Menu -->
 
-
-            <!-- Divider -->
+            
+            <!-- Recruiter Menu -->
+            {% if session['role'] == "RECRUITER" %}
             <hr class="sidebar-divider d-none d-md-block">
-
-
-            <!-- ADMIN MENU -->
-
+            <div class="sidebar-heading">
+                Recruiter Menu
+            </div>
             <!-- Post a job -->
             <li class="nav-item">
                 <a class="nav-link" href="/admin/job-form">
@@ -103,6 +102,9 @@
                     <i class="fas fa-fw fa-table"></i>
                     <span>List job</span></a>
             </li>
+            {% endif %}
+            <!-- End Recruiter Menu -->
+
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
@@ -349,8 +351,7 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- Page Heading 
-                    <h1 class="h3 mb-4 text-gray-800"> Title </h1> -->
+                    <h1 class="h3 mb-4 text-gray-800"> User : {{session.username}} </h1> 
 
                     {% block content %}
 
