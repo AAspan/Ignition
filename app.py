@@ -50,11 +50,12 @@ def home():
 #Show a list of job on the frontend
 @app.route('/jobs')
 def jobs():
-
+    query = MySQL(app)
     #request to get the jobs
-    cursor = mysql.connection.cursor()
+    cursor = query.connection.cursor()
     cursor.execute('SELECT * FROM job AS J LEFT JOIN company AS C ON J.company_id = C.id')
     result = cursor.fetchall()
+    cursor.close()
     print(result)
     return render_template('jobs.html', jobs = result)
 
@@ -111,11 +112,11 @@ def login():
 
                     if data:
                         session['logged_in']=True
-                        session['user_id']= data[0]
-                        session['username']=data[1]
-                        session['email']=email
-                        session['role']=data[4]
-                        session['company_id']=data[5]
+                        session['user_id']= data["id"]
+                        session['username']=data["name"]
+                        session['email']=email["email"]
+                        session['role']=data["role"]
+                        session['company_id']=data["company_id"]
                 
 
                 return render_template('home.html')
@@ -171,7 +172,7 @@ def loginemp():
         data=cur.fetchone()
         if data:
             session['logged_in']=True
-            session['username']=data[1]
+            session['username']=data["name"]
             flash('Login Successfully','success')
             return redirect('admin')
         else:
