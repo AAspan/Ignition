@@ -25,6 +25,8 @@ app.config['MYSQL_HOST'] = db_config['host']
 app.config['MYSQL_USER'] = db_config['user']
 app.config['MYSQL_PASSWORD'] = db_config['password']
 app.config['MYSQL_DB'] = db_config['database']
+app.config["MYSQL_CURSORCLASS"] = "DictCursor"
+
 mysql = MySQL(app)
 
 config = {
@@ -51,9 +53,9 @@ def jobs():
 
     #request to get the jobs
     cursor = mysql.connection.cursor()
-    cursor.execute('SELECT * FROM job')
+    cursor.execute('SELECT * FROM job AS J LEFT JOIN company AS C ON J.company_id = C.id')
     result = cursor.fetchall()
-    
+    print(result)
     return render_template('jobs.html', jobs = result)
 
 #Page to show the job description
@@ -333,6 +335,23 @@ def applications(job_id):
         print(item)
 
     return render_template('admin/applications.html', applications=result)
+
+
+#Show applications list of the Candidate
+@app.route('/admin/company')
+def company():
+    candidate_id = session['user_id'] # Get the candidate id from the session
+    
+    if session['company_id'] != None:
+        cursor = mysql.connection.cursor()
+        cursor.execute('SELECT * FROM company WHERE id =' + str(session['company_id']) )
+        #cursor.execute(sql_req, data)
+        result = cursor.fetchall()
+        print("Company Defined =>")
+        print(result)
+
+    return render_template('admin/company.html', applications=result)
+
 
 #Show profile information 
 @app.route('/admin/my-profile')
