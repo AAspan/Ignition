@@ -196,18 +196,35 @@ def reg():
     print(request)
 
     if request.method=='POST':
+
         name=request.form["uname"]
         email=request.form["email"]
+        degree=request.form["degree"]
+        phone=request.form["phone"]
+        role=request.form["role"]
         pwd=request.form["upass"]
-
         print(pwd)
 
         cur=mysql.connection.cursor()
-        cur.execute("INSERT INTO user(name,password,email, role) VALUES(%s,%s,%s, %s)",(name,pwd,email, "RECRUITER"))
+        cur.execute("INSERT INTO user(name,email,degree,phone,role,password) VALUES(%s,%s,%s,%s,%s,%s)",(name,email,degree,phone,role,pwd))
         mysql.connection.commit()
 
+        cur.execute("SELECT * from user where email=%s and password=%s",(email,pwd))
+        data = cur.fetchone()
+
+        print(data)
+
+        if data:
+            #data = data[0]
+            session['logged_in']=True
+            session['user_id']= data["id"]
+            session['username']=name
+            session['email']=email
+            session['role']=role
+            session['company_id']=data["company_id"]
+
         cur.close()
-        flash('Registration Successfully. Login Here...','success')
+        flash('Registration Successfully. Welcome','success')
         return redirect('admin')
     return render_template("reg.html",status=status)
 
