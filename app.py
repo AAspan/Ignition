@@ -273,10 +273,13 @@ def formpostjob():
     cursor = mysql.connection.cursor()
     cursor.execute('SELECT * FROM job')
     rv = cursor.fetchall()
-
+    cursor.close()
     print(rv)
 
-    return render_template('admin/job-form.html')
+    #for item in rv:
+        #print(item)
+
+    return render_template('admin/job-list.html', job = rv)
 
 
 
