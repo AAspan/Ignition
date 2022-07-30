@@ -50,9 +50,8 @@ def home():
 #Show a list of job on the frontend
 @app.route('/jobs')
 def jobs():
-    query = MySQL(app)
     #request to get the jobs
-    cursor = query.connection.cursor()
+    cursor = mysql.connection.cursor()
     cursor.execute('SELECT * FROM job AS J LEFT JOIN company AS C ON J.company_id = C.id')
     result = cursor.fetchall()
     cursor.close()
@@ -114,7 +113,7 @@ def login():
                         session['logged_in']=True
                         session['user_id']= data["id"]
                         session['username']=data["name"]
-                        session['email']=email["email"]
+                        session['email']=data["email"]
                         session['role']=data["role"]
                         session['company_id']=data["company_id"]
                 
@@ -241,7 +240,6 @@ def logout():
 	session.clear()
 	flash('You are now logged out','success')
 	return redirect(url_for('login'))
- 
 
 
 #Admin Home page
@@ -355,6 +353,7 @@ def applications(job_id):
     return render_template('admin/applications.html', applications=result)
 
 
+'''
 #Show applications list of the Candidate
 @app.route('/admin/company')
 def company():
@@ -369,7 +368,7 @@ def company():
         print(result)
 
     return render_template('admin/company.html', applications=result)
-
+'''
 
 #Show profile information 
 @app.route('/admin/my-profile')
@@ -378,6 +377,54 @@ def myprofile():
     #cursor.execute('SELECT * FROM application')
     #rv = cursor.fetchall()
     return render_template('admin/profile-candidate.html')
+
+#Show profile information 
+@app.route('/admin/company', methods = ['POST', 'GET'])
+def mycompany():
+    #cursor = mysql.connection.cursor()
+    #cursor.execute('SELECT * FROM application')
+    #rv = cursor.fetchall()
+
+
+    if request.method == 'GET': #Show the form
+        
+        return render_template('admin/company.html')
+
+    
+    if request.method == 'POST':
+        #Get input from form
+        name = request.form.get("name")
+        location = request.form.get("location")
+        email = request.form.get("email")
+        #logo = session['company_id'] #We assign the company id of the connected user
+        description = request.form.get("description")
+        
+        #Create or Update a company
+        cursor = mysql.connection.cursor()
+        sql_req = """INSERT INTO company (name, location, email, description) 
+                                    VALUES (%s, %s, %s, %s)"""
+        data = (name, location, email, description)
+
+        cursor.execute(sql_req, data)
+        
+        company_id_inserted = cursor.lastrowid
+        
+
+
+
+        #Assign company ID to the user
+        sql_update = """UPDATE user SET company_id =%s WHERE id =%s"""
+        data = (company_id_inserted, session["user_id"])
+        cursor.execute(sql_update, data)
+
+        #print(cursor.insert_id())
+
+        cursor.close()
+
+
+        return render_template('admin/company.html')
+
+
 
 
 #Show Application form
