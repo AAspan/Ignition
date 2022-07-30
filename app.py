@@ -390,6 +390,29 @@ def apply(job_id):
 
     return render_template('apply.html')
 
+#User settings  
+@app.route('/admin/usersettings',methods=['POST','GET'])
+def usersettings():
+    status=False
+    print(request)
+
+    if request.method=='POST':
+        name=request.form["uname"]
+        email=request.form["email"]
+        pwd=request.form["upass"]
+
+        print(pwd)
+
+        cur=mysql.connection.cursor()
+        cur.execute("UPDATE user(name,password,email, role) VALUES(%s,%s,%s, %s)",(name,pwd,email, "RECRUITER"))
+        mysql.connection.commit()
+
+        cur.close()
+        flash('Registration Successfully. Login Here...','success')
+        return redirect('admin')
+    return render_template("admin/usersettings.html",status=status)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
