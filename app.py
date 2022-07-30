@@ -50,11 +50,11 @@ def home():
 #Show a list of job on the frontend
 @app.route('/jobs')
 def jobs():
-
     #request to get the jobs
     cursor = mysql.connection.cursor()
     cursor.execute('SELECT * FROM job AS J LEFT JOIN company AS C ON J.company_id = C.id')
     result = cursor.fetchall()
+    cursor.close()
     print(result)
     return render_template('jobs.html', jobs = result)
 
@@ -111,11 +111,11 @@ def login():
 
                     if data:
                         session['logged_in']=True
-                        session['user_id']= data[0]
-                        session['username']=data[1]
-                        session['email']=email
-                        session['role']=data[4]
-                        session['company_id']=data[5]
+                        session['user_id']= data["id"]
+                        session['username']=data["name"]
+                        session['email']=data["email"]
+                        session['role']=data["role"]
+                        session['company_id']=data["company_id"]
                 
 
                 return render_template('home.html')
@@ -171,7 +171,7 @@ def loginemp():
         data=cur.fetchone()
         if data:
             session['logged_in']=True
-            session['username']=data[1]
+            session['username']=data["name"]
             flash('Login Successfully','success')
             return redirect('admin')
         else:
@@ -240,7 +240,6 @@ def logout():
 	session.clear()
 	flash('You are now logged out','success')
 	return redirect(url_for('login'))
- 
 
 
 #Admin Home page
@@ -357,6 +356,7 @@ def applications(job_id):
     return render_template('admin/applications.html', applications=result)
 
 
+'''
 #Show applications list of the Candidate
 @app.route('/admin/company')
 def company():
@@ -371,7 +371,7 @@ def company():
         print(result)
 
     return render_template('admin/company.html', applications=result)
-
+'''
 
 #Show profile information 
 @app.route('/admin/my-profile')
@@ -380,6 +380,73 @@ def myprofile():
     #cursor.execute('SELECT * FROM application')
     #rv = cursor.fetchall()
     return render_template('admin/profile-candidate.html')
+
+#Show List of companies on front end page  
+@app.route('/companies')
+def companies():
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM company')
+    data = cursor.fetchall()
+    return render_template('companies.html', companies = data)
+
+#Show company of the recruiter 
+@app.route('/admin/company', methods = ['POST', 'GET'])
+def mycompany():
+    
+    if request.method == 'GET': #Show the form
+        #Take company of the connected user
+        print("=> Try get company")
+
+        company = None
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT * FROM company WHERE id='"+ str(session["company_id"])+"'" )
+        data = cursor.fetchone()
+
+        if(data):
+            print("Company of the user")
+            print(data)
+
+            return render_template('admin/company.html', company = data )
+
+    
+    if request.method == 'POST':
+        #Get input from form
+
+        name = request.form.get("name")
+        location = request.form.get("location")
+        email = request.form.get("email")
+        #logo = session['company_id'] #We assign the company id of the connected user
+        description = request.form.get("description")
+
+        #Create or Update a company
+        cursor = mysql.connection.cursor()
+
+        if(session["company_id"] <= 0): #not defined
+            data = (name, location, email, description)
+            sql_req = """INSERT INTO company (name, location, email, description) 
+                                    VALUES (%s, %s, %s, %s)"""
+            cursor.execute(sql_req, data)
+            print("=> Insert")
+            company_id_inserted = cursor.lastrowid
+
+            #Assign company ID to the user
+            sql_update = """UPDATE user SET company_id =%s WHERE id =%s"""
+            data = (company_id_inserted, session["user_id"])
+            cursor.execute(sql_update, data)
+
+        else:
+            data = (name, location, email, description, str(session["company_id"]))
+            sql_req = """UPDATE company SET name = %s, location= %s, email= %s, description= %s WHERE id=%s"""
+            cursor.execute(sql_req, data)
+
+        #print(cursor.insert_id())
+
+        cursor.close()
+
+
+        return redirect('/admin/company')
+
+
 
 
 #Show Application form

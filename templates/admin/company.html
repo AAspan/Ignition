@@ -21,10 +21,12 @@
 
 <form action="" method="post">
     
+    {% if not company.name %}
+
     <div class="form-row">
         <div class="form-group col-md-6">
             <label for="inputEmail4">Name</label>
-            <input type="title" class="form-control" id="name" name="name" placeholder="Software Engineer">
+            <input type="title" value="" class="form-control" id="name" name="name" placeholder="">
         </div>
 
     </div>
@@ -33,19 +35,20 @@
         
         <div class="form-group col-md-6">
             <label for="inputCity">Location</label>
-            <input type="text" class="form-control" id="location" name="location">
+            <input type="text" value="" class="form-control" id="location" name="location">
         </div>
     </div>
+
     <div class="form-row">
         
-        <div class="form-group col-md-4">
-            <label for="inputState">Job type</label>
-            <select id="inputState" name="jobtype" class="form-control">
-                <option> Full time </option>
-                <option> Part-time</option>
-            </select>
+        <div class="form-group col-md-6">
+            <label for="email">Email</label>
+            <input type="text" class="form-control" id="email" name="email">
         </div>
+    </div>
 
+    <div class="form-row">
+       
         <div class="form-group col-md-4">
             <label for="expiration_date"> Logo </label>
             <input class="form-control" type="file" name="logo" id="logo">
@@ -60,6 +63,52 @@
             <textarea id="editor" name="description" class="form-control" row="20"></textarea>
         </div>
     </div>
+
+    {% else %}
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="inputEmail4">Name</label>
+            <input type="title" value="{{company.name}}" class="form-control" id="name" name="name" placeholder="">
+        </div>
+
+    </div>
+   
+    <div class="form-row">
+        
+        <div class="form-group col-md-6">
+            <label for="inputCity">Location</label>
+            <input type="text" value="{{company.location}}" class="form-control" id="location" name="location">
+        </div>
+    </div>
+
+    <div class="form-row">
+        
+        <div class="form-group col-md-6">
+            <label for="email">Email</label>
+            <input type="text" value="{{company.email}}" class="form-control" id="email" name="email">
+        </div>
+    </div>
+
+    <div class="form-row">
+       
+        <div class="form-group col-md-4">
+            <label for="expiration_date"> Logo </label>
+            <input class="form-control" type="file" name="logo" id="logo">
+        </div>
+
+    </div>
+    
+    <div class="form-row"> 
+
+        <div class="form-group col-lg-12">
+            <label for="inputState">Description</label>
+            <textarea id="editor" name="description" class="form-control" row="20">{{company.description}}</textarea>
+        </div>
+    </div>
+
+
+    {% endif %}
 
     <button type="submit" class="btn btn-primary">Submit</button>
     <button type="reset" class="btn btn-primary">Cancel</button>
