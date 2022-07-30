@@ -378,51 +378,70 @@ def myprofile():
     #rv = cursor.fetchall()
     return render_template('admin/profile-candidate.html')
 
-#Show profile information 
+#Show List of companies on front end page  
+@app.route('/companies')
+def companies():
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM company')
+    data = cursor.fetchall()
+    return render_template('companies.html', companies = data)
+
+#Show company of the recruiter 
 @app.route('/admin/company', methods = ['POST', 'GET'])
 def mycompany():
-    #cursor = mysql.connection.cursor()
-    #cursor.execute('SELECT * FROM application')
-    #rv = cursor.fetchall()
-
-
+    
     if request.method == 'GET': #Show the form
-        
-        return render_template('admin/company.html')
+        #Take company of the connected user
+        print("=> Try get company")
+
+        company = None
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT * FROM company WHERE id='"+ str(session["company_id"])+"'" )
+        data = cursor.fetchone()
+
+        if(data):
+            print("Company of the user")
+            print(data)
+
+            return render_template('admin/company.html', company = data )
 
     
     if request.method == 'POST':
         #Get input from form
+
         name = request.form.get("name")
         location = request.form.get("location")
         email = request.form.get("email")
         #logo = session['company_id'] #We assign the company id of the connected user
         description = request.form.get("description")
-        
+
         #Create or Update a company
         cursor = mysql.connection.cursor()
-        sql_req = """INSERT INTO company (name, location, email, description) 
+
+        if(session["company_id"] <= 0): #not defined
+            data = (name, location, email, description)
+            sql_req = """INSERT INTO company (name, location, email, description) 
                                     VALUES (%s, %s, %s, %s)"""
-        data = (name, location, email, description)
+            cursor.execute(sql_req, data)
+            print("=> Insert")
+            company_id_inserted = cursor.lastrowid
 
-        cursor.execute(sql_req, data)
-        
-        company_id_inserted = cursor.lastrowid
-        
+            #Assign company ID to the user
+            sql_update = """UPDATE user SET company_id =%s WHERE id =%s"""
+            data = (company_id_inserted, session["user_id"])
+            cursor.execute(sql_update, data)
 
-
-
-        #Assign company ID to the user
-        sql_update = """UPDATE user SET company_id =%s WHERE id =%s"""
-        data = (company_id_inserted, session["user_id"])
-        cursor.execute(sql_update, data)
+        else:
+            data = (name, location, email, description, str(session["company_id"]))
+            sql_req = """UPDATE company SET name = %s, location= %s, email= %s, description= %s WHERE id=%s"""
+            cursor.execute(sql_req, data)
 
         #print(cursor.insert_id())
 
         cursor.close()
 
 
-        return render_template('admin/company.html')
+        return redirect('/admin/company')
 
 
 
