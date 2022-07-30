@@ -19,8 +19,28 @@
                     <th>Office</th>
                     <th>Company ID</th>
                     <th>Availability</th>
+                    <th>Action</th>
                 </tr>
             </thead>
+           
+            <tbody>
+                
+                <!-- modified to use for loop to display data from sql database-->
+                {% for row in job %}
+                <tr>
+                    <td>{{row.id}}</td>
+                    <td>{{row.title}}</td>
+                    <td>{{row.location}}</td>
+                    <td>{{row.company_id}}</td>
+                    <td>{{row.jobtype}}</td>
+                    <td> <a href="/admin/applications/{{row.id}}"> Check application</a></td>
+                </tr>
+                {% endfor %}
+
+                
+
+            </tbody>
+
             <tfoot>
                 <tr>
                     <th>Job ID</th>
@@ -28,48 +48,9 @@
                     <th>Office</th>
                     <th>Company ID</th>
                     <th>Availability</th>
+                    <th>Action</th>
                 </tr>
             </tfoot>
-            <tbody>
-                
-                <!-- modified to use for loop to display data from sql database-->
-                {% for row in job %}
-                <tr>
-                    <td>{{row.0}}</td>
-                    <td>{{row.1}}</td>
-                    <td>{{row.5}}</td>
-                    <td>{{row.3}}</td>
-                    <td>{{row.6}}</td>
-                </tr>
-                {% endfor %}
-
-                <tr>
-                    <td>Tiger Nixon</td>
-                    <td>System Architect</td>
-                    <td>Edinburgh</td>
-                    <td>61</td>
-                    <td>2011/04/25</td>
-                    <td>$320,800</td>
-                </tr>
-
-                <tr>
-                    <td>Garrett Winters</td>
-                    <td>Accountant</td>
-                    <td>Tokyo</td>
-                    <td>63</td>
-                    <td>2011/07/25</td>
-                    <td>$170,750</td>
-                </tr>
-                <tr>
-                    <td>Ashton Cox</td>
-                    <td>Junior Technical Author</td>
-                    <td>San Francisco</td>
-                    <td>66</td>
-                    <td>2009/01/12</td>
-                    <td>$86,000</td>
-                </tr>
-
-            </tbody>
         </table>
     </div>
 </div>

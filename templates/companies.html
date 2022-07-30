@@ -3,6 +3,7 @@
 {% block content %}
 
 
+    <div> 
     <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for your company...">
 
    
@@ -22,8 +23,7 @@
                 <p class="title"> {{ company.name }} </p>        
                 <p> {{ company.location }} </p>
                 <p> 
-                    <a href="/job-description/{{ company.id }}"> Look </a> | 
-                    <a href="/apply/{{ company.id }}"> Apply </a> 
+                    <a href="/jobs/{{company.id}}" title="Look for job of this company only"> Look </a>
                 </p>
                 
 
@@ -34,6 +34,8 @@
     {%endfor%}
 
     </ul>
+
+    </div>
 
     <style>
 

@@ -55,7 +55,16 @@ def jobs():
     cursor.execute('SELECT * FROM job AS J LEFT JOIN company AS C ON J.company_id = C.id')
     result = cursor.fetchall()
     cursor.close()
-    print(result)
+    return render_template('jobs.html', jobs = result)
+
+#Show a list of job for a particular company on the front
+@app.route('/jobs/<int:job_id>')
+def jobs_company(job_id):
+    #request to get the jobs
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM job AS J LEFT JOIN company AS C ON J.company_id = C.id WHERE C.id =' + str(job_id) )
+    result = cursor.fetchall()
+    cursor.close()
     return render_template('jobs.html', jobs = result)
 
 #Page to show the job description
@@ -269,17 +278,7 @@ def dashboard():
 #post a job form by a company
 @app.route('/admin/job-form')
 def formpostjob():
-
-    cursor = mysql.connection.cursor()
-    cursor.execute('SELECT * FROM job')
-    rv = cursor.fetchall()
-    cursor.close()
-    print(rv)
-
-    #for item in rv:
-        #print(item)
-
-    return render_template('admin/job-list.html', job = rv)
+    return render_template('admin/job-form.html')
 
 
 
@@ -288,12 +287,9 @@ def formpostjob():
 def listpostjob():
 
     cursor = mysql.connection.cursor()
-    cursor.execute('SELECT * FROM job')
+    cursor.execute('SELECT * FROM job WHERE company_id=' + str(session["company_id"]) )
     rv = cursor.fetchall()
-
-    print(rv)
-
-    return render_template('admin/job-list.html')
+    return render_template('admin/job-list.html', job = rv)
 
 #post a job form by a company
 @app.route('/admin/add-job', methods = ['POST', 'GET'])
