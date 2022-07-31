@@ -91,11 +91,11 @@ def alerts():
     return render_template('alerts.html')
 
 @app.route('/about')
-def alerts():
+def about():
     return render_template('about.html')
 
 @app.route('/faq')
-def alerts():
+def faq():
     return render_template('FAQ.html')
 #Authentication
 
