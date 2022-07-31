@@ -3,13 +3,13 @@
 
 {% block content %}
 
-    <h1> Job Description : {{ job[1] }} </h1>
+    <h1> Job Description : {{ job.ttile }} </h1>
+    <p> Expiration Date : {{ job.expiration }} </p>
 
     <div>
-        {{ job[5] }}
+        {{ job.description }}
     </div>
 
-    <p> Expiration Date : </p>
 
 
 {% endblock %}
