@@ -391,7 +391,7 @@ def apply(job_id):
     return render_template('apply.html')
 
 #User settings  
-@app.route('/admin/usersettings',methods=['POST','GET'])
+@app.route('/admin/usersettings', methods=['POST','GET'])
 def usersettings():
     status=False
     print(request)
@@ -409,7 +409,6 @@ def usersettings():
 
         cur.close()
         flash('Registration Successfully. Login Here...','success')
-        return redirect('admin')
     return render_template("admin/usersettings.html",status=status)
 
 
