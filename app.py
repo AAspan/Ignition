@@ -476,10 +476,14 @@ def usersettings():
         pwd=request.form["upass"]
 
         print(pwd)
-
+        data = (name,pwd,email, session["role"], session["user_id"])
         cur=mysql.connection.cursor()
-        cur.execute("UPDATE user(name,password,email, role) VALUES(%s,%s,%s, %s)",(name,pwd,email, "RECRUITER"))
+        cur.execute("UPDATE user SET name = %s ,password =%s, email=%s , role=%s WHERE id=%s", data)
         mysql.connection.commit()
+
+        #Upadate session
+        session['username']=name
+        #email should be change in firebase too.
 
         cur.close()
         flash('Registration Successfully. Login Here...','success')
