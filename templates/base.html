@@ -3,6 +3,15 @@
 
 <head>
     <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        .select-nav-menu {
+            /*position: absolute; */
+            background-color: palevioletred;
+        }
+
+    </style>
 
 </head>
 
@@ -10,18 +19,19 @@
 
     <img src="/static/images/ignition logo.png" alt="ignition logo" style="width:300px;height:150px;margin-top:-40px;" >
     <nav>
-        <a href="/home">Home</a>
-        <a href="/event">Event</a>
-        <a href="/alerts">Alerts</a>
-        <a href="/jobs">jobs</a>
-        <a href="/about">About</a>
-        <a href="/faq">FAQ</a>
-        <a href="/admin">Profile</a>
-        <a href="/logout">Log Out</a>
+        <a href="/home" id="nav-link-home"> <i class="fa-solid fa-house-user"></i> Home</a>
+        <a href="/event" id="nav-link-event"> <i class="fa-solid fa-calendar-check"></i> Event</a>
+        <a href="/alerts" id="nav-link-alert"> <i class="fa-solid fa-bell"></i> Alerts</a>
+        <a href="/jobs" id="nav-link-job" > <i class="fa-solid fa-user-doctor"></i> jobs</a>
+        <a href="/about" id="nav-link-about" > <i class="fa-solid fa-memo"></i> About</a>
+        <a href="/faq" id="nav-link-faq" > <i class="fa-solid fa-question"></i> FAQ </a>
+        <a href="/admin" id="nav-link-profile"> <i class="fa-solid fa-address-card"></i> Profile</a>
+        <a href="/logout" >Log Out</a>
 
         
 
-        <div class="animation start-home"></div>
+        <div class="animation"></div>
+
     </nav>
 
 
