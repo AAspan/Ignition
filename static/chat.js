@@ -1,6 +1,6 @@
 var firebaseConfig = {
     // your config code
-
+  
  };
   // Initialize Firebase
 firebase.initializeApp(firebaseConfig);

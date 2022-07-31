@@ -25,8 +25,6 @@ app.config['MYSQL_HOST'] = db_config['host']
 app.config['MYSQL_USER'] = db_config['user']
 app.config['MYSQL_PASSWORD'] = db_config['password']
 app.config['MYSQL_DB'] = db_config['database']
-app.config["MYSQL_CURSORCLASS"] = "DictCursor"
-
 mysql = MySQL(app)
 
 config = {
@@ -52,7 +50,7 @@ def home():
 def jobs():
     #request to get the jobs
     cursor = mysql.connection.cursor()
-    cursor.execute('SELECT * FROM job AS J LEFT JOIN company AS C ON J.company_id = C.id')
+    cursor.execute('SELECT * FROM job')
     result = cursor.fetchall()
     cursor.close()
     return render_template('jobs.html', jobs = result)
@@ -123,7 +121,7 @@ def login():
                     cursor.execute("SELECT * from user where email=%s and password=%s",(email,password))
                     data = cursor.fetchone()
 
-                    print("User Data => ")
+                    print("data => ")
                     print(data)
 
                     if data:
@@ -213,35 +211,18 @@ def reg():
     print(request)
 
     if request.method=='POST':
-
         name=request.form["uname"]
         email=request.form["email"]
-        degree=request.form["degree"]
-        phone=request.form["phone"]
-        role=request.form["role"]
         pwd=request.form["upass"]
+
         print(pwd)
 
         cur=mysql.connection.cursor()
-        cur.execute("INSERT INTO user(name,email,degree,phone,role,password) VALUES(%s,%s,%s,%s,%s,%s)",(name,email,degree,phone,role,pwd))
+        cur.execute("INSERT INTO user(name,password,email, role) VALUES(%s,%s,%s, %s)",(name,pwd,email, "RECRUITER"))
         mysql.connection.commit()
 
-        cur.execute("SELECT * from user where email=%s and password=%s",(email,pwd))
-        data = cur.fetchone()
-
-        print(data)
-
-        if data:
-            #data = data[0]
-            session['logged_in']=True
-            session['user_id']= data["id"]
-            session['username']=name
-            session['email']=email
-            session['role']=role
-            session['company_id']=data["company_id"]
-
         cur.close()
-        flash('Registration Successfully. Welcome','success')
+        flash('Registration Successfully. Login Here...','success')
         return redirect('admin')
     return render_template("reg.html",status=status)
 
@@ -262,14 +243,8 @@ def logout():
 #Admin Home page
 @app.route('/admin')
 def admin():
-    #Check if the a user is logged in
-    if('logged_in' in session):
-        if( session['logged_in'] == True ): 
-            return render_template('admin/dashboard.html')
-        else:
-            return redirect(url_for('login'))
-    else:
-        return redirect(url_for('login'))
+
+    return render_template('admin/dashboard.html')
 
 
 #Dashboard
@@ -313,7 +288,7 @@ def addjob():
         title = request.form.get("title")
         location = request.form.get("location")
         jobtype = request.form.get("jobtype")
-        company_id = session['company_id'] #We assign the company id of the connected user
+        company_id = 1 #Will need to come from recruiter company_id
         description = request.form.get("description")
         
         #Treament of the date
@@ -336,7 +311,7 @@ def addjob():
 #Show applications list of the Candidate
 @app.route('/admin/my-applications')
 def myapplications():
-    candidate_id = session['user_id'] # We should get the candidate id from the session
+    candidate_id=1 # We should get the candidate id from the session
     cursor = mysql.connection.cursor()
     cursor.execute('SELECT * FROM application WHERE candidate_id = ' + str(candidate_id) )
     #cursor.execute(sql_req, data)
