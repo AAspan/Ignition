@@ -25,6 +25,7 @@ app.config['MYSQL_HOST'] = db_config['host']
 app.config['MYSQL_USER'] = db_config['user']
 app.config['MYSQL_PASSWORD'] = db_config['password']
 app.config['MYSQL_DB'] = db_config['database']
+app.config["MYSQL_CURSORCLASS"] = "DictCursor"
 mysql = MySQL(app)
 
 config = {
