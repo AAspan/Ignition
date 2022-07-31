@@ -1,9 +1,9 @@
-{% extends 'admin.html' %}
+{% extends '/admin/admin-layout.html' %}
 {% block body %}
   <div class='row mt-5'>
     <div class='col-4 mx-auto'>
       <h4 class='text-center'>User Settings</h4><hr>
-      <form action="{{url_for('reg')}}" method='post'>
+      <form action="{{url_for('usersettings')}}" method='post'>
         <div class='form-group'>
           <label>User Name</label>
           <input type='text' name='uname' required class='form-control'>  
