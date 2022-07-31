@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 apiKey: 
 authDomain: 
 databaseURL: 
@@ -6,12 +5,3 @@ projectId:
 storageBucket: 
 messagingSenderId: 
 appId: 
-=======
-apiKey:
-authDomain:
-databaseURL:
-projectId:
-storageBucket:
-messagingSenderId:
-appId:
->>>>>>> a0363bd11104736cf72987457f35971b35c18d2a
