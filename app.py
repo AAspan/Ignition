@@ -409,6 +409,8 @@ def usersettings():
 
         cur.close()
         flash('Registration Successfully. Login Here...','success')
+        return redirect('/admin/usersettings') #Redirect to the same page
+
     return render_template("admin/usersettings.html",status=status)
 
 
