@@ -82,6 +82,15 @@ def event():
 @app.route('/alerts')
 def alerts():
     return render_template('alerts.html')
+
+@app.route('/about')
+def about_page():
+    return render_template('about_page.html')
+    
+@app.route('/faq')
+def faq_page():
+    return render_template('faq_page.html')
+
 #Authentication
 
 
