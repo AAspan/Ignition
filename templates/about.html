@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<head>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+
+<nav>
+    <a href="/home">Home</a>
+    <a href="/event">Event</a>
+    <a href="/alerts">Alerts</a>
+    <a href="/jobs">jobs</a>
+    <a href="/profile">Profile</a>
+    
+    <div class="animation start-home"></div>
+</nav>
+
+
+<h1> <p style="margin: 5px; line-height: 0; text-align:center;color:rgba(0, 0, 0, 0.833);">  About Page </h1>
+<h2 > <p style="color:rgb(69, 38, 248);"> <u> INTRO </u> </h2>
+    <p> 
+    <p style="margin: 5px; line-height: 1; text-align:center;"> 
+    Nowadays, it might seem there are countless jobs to choose from, but the reality is that high-paying jobs are difficult to obtain, more so when you have no practical experience. Although many job application platforms exist, the most common problem is having the Application Tracking System drop your application. 
+    Our idea is to help graduates navigate their job hunt by creating a job application board designed for recent graduates. Our team will reach out to companies specifically looking for recent graduates and give them the opportunity to post their job on our platform. Each company will have an account that allows them to post jobs, view applicants, and conduct interviews directly through our platform. 
+    Applicants will have the ability to filter jobs by company and other criteria such as availability, job title, skills/majors, compensation, tuition reimbursement, etc. They will be able to see which companies are holding events, view programs for recent graduates, subscribe to company notifications, and track their applications. 
+    Our end goal is to eliminate the struggle of browsing the job market without prior job experience. This is why our application is call “Ignition”; we launch job seekers’ careers.  
+    </p>
+<h2> <p style="color:rgb(69, 38, 248);"> <u> TECH</u> </h2>     
+    <p>
+    <p style="margin: 5px; line-height: 1; text-align:center;"> 
+    Our client side interface will be a web page designed with HTML, CSS and JavaScript implementing responsive design to facilitate a mobile experience. 
+    The frontend will be connected with Flask, a Python Web Application Framework based on the Werkzeug WSGI (Web Server Gateway Interface) toolkit and Jinja2 template engine. 
+    We decided to use Flask because it requires minimal lines of code, it’s easy to maintain, and since it is a python language expanding the scope of our app is readily available by using python libraries. 
+    The backend will communicate with a MySQL database storing all applicants’ data. For version control we will be using Git, GitHub and Azure DevOps to track backlog. 
+    Our main IDE will be Visual Studio Code because it’s cross platform, and easy to extend with many plugins. 
+    </p>
+
+{% endblock %}
