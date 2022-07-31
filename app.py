@@ -93,11 +93,11 @@ def alerts():
     return render_template('alerts.html')
 
 @app.route('/about')
-def alerts():
+def about():
     return render_template('about.html')
 
 @app.route('/faq')
-def alerts():
+def faq():
     return render_template('FAQ.html')
 #Authentication
 
@@ -483,10 +483,40 @@ def apply(job_id):
         cursor.execute(sql_req, data)
         print("=> Inserted")
 
+
         mysql.connection.commit()
         cursor.close()
         #return render_template('application', job=data)
         return redirect('/admin/my-applications')
+
+#User settings  
+@app.route('/admin/usersettings', methods=['POST','GET'])
+def usersettings():
+    status=False
+    print(request)
+
+    if request.method=='POST':
+        name=request.form["uname"]
+        email=request.form["email"]
+        pwd=request.form["upass"]
+
+        print(pwd)
+        data = (name,pwd,email, session["role"], session["user_id"])
+        cur=mysql.connection.cursor()
+        cur.execute("UPDATE user SET name = %s ,password =%s, email=%s , role=%s WHERE id=%s", data)
+        mysql.connection.commit()
+
+        #Upadate session
+        session['username']=name
+        #email should be change in firebase too.
+
+        cur.close()
+        flash('Registration Successfully. Login Here...','success')
+        return redirect('/admin/usersettings') #Redirect to the same page
+
+    return render_template("admin/usersettings.html",status=status)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
