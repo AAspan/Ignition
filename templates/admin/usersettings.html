@@ -1,34 +1,36 @@
 {% extends '/admin/admin-layout.html' %}
-{% block body %}
-  <div class='row mt-5'>
-    <div class='col-4 mx-auto'>
-      <h4 class='text-center'>User Settings</h4><hr>
-      <form action="{{url_for('usersettings')}}" method='post'>
-        <div class='form-group'>
-          <label>User Name</label>
-          <input type='text' name='uname' required class='form-control' value="{{ session['username'] }}">  
-        </div>
-        <div class='form-group'>
-          <label>Email</label>
-          <input type='email' name='email' required class='form-control' value="{{ session['email'] }}">  
-        </div>
 
-        <div class='form-group'>
-          <label>Old Password</label>
-          <input type='password' name='old_upass' required class='form-control'>  
-        </div>
+{% block content %}
 
-        <div class='form-group'>
-          <label>New Password</label>
-          <input type='password' name='new_upass' required class='form-control'>  
-        </div>
 
-        <div class='form-group'>
-          <label>Confirm Password</label>
-          <input type='password' name='upass' required class='form-control'>  
-        </div>
-        <input type='submit' name='submit' value='Submit' class='btn btn-success'>
-      </form>
-    </div>
-  </div>
+    <h1 class='text-center'>User Settings</h1><hr>
+
+    <form action="{{url_for('usersettings')}}" method='post'>
+      <div class='form-group' class="col-md-6">
+        <label>User Name</label>
+        <input type='text' name='uname' required class='form-control' value="{{ session['username'] }}">  
+      </div>
+      <div class='form-group' class="col-md-6">
+        <label>Email</label>
+        <input type='email' disabled name='email' required class='form-control' value="{{ session['email'] }}">  
+      </div>
+
+      <div class='form-group' class="col-md-6">
+        <label>Old Password</label>
+        <input type='password' name='old_upass' required class='form-control'>  
+      </div>
+
+      <div class='form-group' class="col-md-6">
+        <label>New Password</label>
+        <input type='password' name='new_upass' required class='form-control'>  
+      </div>
+
+      <div class='form-group' class="col-md-6">
+        <label>Confirm Password</label>
+        <input type='password' name='upass' required class='form-control'>  
+      </div>
+      <input type='submit' name='submit' value='Submit' class='btn btn-success'>
+    
+    </form>
+   
 {% endblock %}
