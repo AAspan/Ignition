@@ -446,13 +446,39 @@ def mycompany():
 
 
 #Show Application form
-@app.route('/apply/<int:job_id>')
+@app.route('/apply/<int:job_id>', methods = ['POST', 'GET'])
 def apply(job_id):
 
-    #request to get job description
+    if request.method == 'GET':
 
-    return render_template('apply.html')
+        #request to get job description
+        cursor = mysql.connection.cursor()
+        sql_update = """SELECT * FROM job WHERE id ="""+ str(job_id)
+        cursor.execute(sql_update)
+        data = cursor.fetchone()
 
+        return render_template('apply.html', job=data)
+
+    if request.method == 'POST':
+        #request to apply to the job
+
+        experience = request.form.get("experience")
+        coverletter = request.form.get("cover_letter")
+        job_id = request.form.get("job_id")
+        #email = request.form.get("email")
+
+        data = (session["username"], int(experience), coverletter, job_id, session["user_id"])
+        print(data)
+        sql_req = """INSERT INTO application (name, experience, cover_letter, job_id, candidate_id) 
+                                    VALUES (%s, %s, %s, %s, %s)"""
+        cursor = mysql.connection.cursor()
+        cursor.execute(sql_req, data)
+        print("=> Inserted")
+
+        mysql.connection.commit()
+        cursor.close()
+        #return render_template('application', job=data)
+        return redirect('/admin/my-applications')
 
 if __name__ == '__main__':
     app.run(debug=True)
