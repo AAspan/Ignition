@@ -50,12 +50,21 @@ def home():
 #Show a list of job on the frontend
 @app.route('/jobs')
 def jobs():
-
     #request to get the jobs
     cursor = mysql.connection.cursor()
     cursor.execute('SELECT * FROM job AS J LEFT JOIN company AS C ON J.company_id = C.id')
     result = cursor.fetchall()
-    print(result)
+    cursor.close()
+    return render_template('jobs.html', jobs = result)
+
+#Show a list of job for a particular company on the front
+@app.route('/jobs/<int:job_id>')
+def jobs_company(job_id):
+    #request to get the jobs
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM job AS J LEFT JOIN company AS C ON J.company_id = C.id WHERE C.id =' + str(job_id) )
+    result = cursor.fetchall()
+    cursor.close()
     return render_template('jobs.html', jobs = result)
 
 #Page to show the job description
@@ -82,6 +91,14 @@ def event():
 @app.route('/alerts')
 def alerts():
     return render_template('alerts.html')
+
+@app.route('/about')
+def alerts():
+    return render_template('about.html')
+
+@app.route('/faq')
+def alerts():
+    return render_template('FAQ.html')
 #Authentication
 
 
@@ -111,11 +128,11 @@ def login():
 
                     if data:
                         session['logged_in']=True
-                        session['user_id']= data[0]
-                        session['username']=data[1]
-                        session['email']=email
-                        session['role']=data[4]
-                        session['company_id']=data[5]
+                        session['user_id']= data["id"]
+                        session['username']=data["name"]
+                        session['email']=data["email"]
+                        session['role']=data["role"]
+                        session['company_id']=data["company_id"]
                 
 
                 return render_template('home.html')
@@ -171,7 +188,7 @@ def loginemp():
         data=cur.fetchone()
         if data:
             session['logged_in']=True
-            session['username']=data[1]
+            session['username']=data["name"]
             flash('Login Successfully','success')
             return redirect('admin')
         else:
@@ -240,7 +257,6 @@ def logout():
 	session.clear()
 	flash('You are now logged out','success')
 	return redirect(url_for('login'))
- 
 
 
 #Admin Home page
@@ -270,17 +286,7 @@ def dashboard():
 #post a job form by a company
 @app.route('/admin/job-form')
 def formpostjob():
-
-    cursor = mysql.connection.cursor()
-    cursor.execute('SELECT * FROM job')
-    rv = cursor.fetchall()
-    cursor.close()
-    print(rv)
-
-    #for item in rv:
-        #print(item)
-
-    return render_template('admin/job-list.html', job = rv)
+    return render_template('admin/job-form.html')
 
 
 
@@ -289,12 +295,9 @@ def formpostjob():
 def listpostjob():
 
     cursor = mysql.connection.cursor()
-    cursor.execute('SELECT * FROM job')
+    cursor.execute('SELECT * FROM job WHERE company_id=' + str(session["company_id"]) )
     rv = cursor.fetchall()
-
-    print(rv)
-
-    return render_template('admin/job-list.html')
+    return render_template('admin/job-list.html', job = rv)
 
 #post a job form by a company
 @app.route('/admin/add-job', methods = ['POST', 'GET'])
@@ -357,6 +360,7 @@ def applications(job_id):
     return render_template('admin/applications.html', applications=result)
 
 
+'''
 #Show applications list of the Candidate
 @app.route('/admin/company')
 def company():
@@ -371,7 +375,7 @@ def company():
         print(result)
 
     return render_template('admin/company.html', applications=result)
-
+'''
 
 #Show profile information 
 @app.route('/admin/my-profile')
@@ -381,14 +385,109 @@ def myprofile():
     #rv = cursor.fetchall()
     return render_template('admin/profile-candidate.html')
 
+#Show List of companies on front end page  
+@app.route('/companies')
+def companies():
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM company')
+    data = cursor.fetchall()
+    return render_template('companies.html', companies = data)
+
+#Show company of the recruiter 
+@app.route('/admin/company', methods = ['POST', 'GET'])
+def mycompany():
+    
+    if request.method == 'GET': #Show the form
+        #Take company of the connected user
+        print("=> Try get company")
+
+        company = None
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT * FROM company WHERE id='"+ str(session["company_id"])+"'" )
+        data = cursor.fetchone()
+
+        if(data):
+            print("Company of the user")
+            print(data)
+
+            return render_template('admin/company.html', company = data )
+
+    
+    if request.method == 'POST':
+        #Get input from form
+
+        name = request.form.get("name")
+        location = request.form.get("location")
+        email = request.form.get("email")
+        #logo = session['company_id'] #We assign the company id of the connected user
+        description = request.form.get("description")
+
+        #Create or Update a company
+        cursor = mysql.connection.cursor()
+
+        if(session["company_id"] <= 0): #not defined
+            data = (name, location, email, description)
+            sql_req = """INSERT INTO company (name, location, email, description) 
+                                    VALUES (%s, %s, %s, %s)"""
+            cursor.execute(sql_req, data)
+            print("=> Insert")
+            company_id_inserted = cursor.lastrowid
+
+            #Assign company ID to the user
+            sql_update = """UPDATE user SET company_id =%s WHERE id =%s"""
+            data = (company_id_inserted, session["user_id"])
+            cursor.execute(sql_update, data)
+
+        else:
+            data = (name, location, email, description, str(session["company_id"]))
+            sql_req = """UPDATE company SET name = %s, location= %s, email= %s, description= %s WHERE id=%s"""
+            cursor.execute(sql_req, data)
+
+        #print(cursor.insert_id())
+
+        cursor.close()
+
+
+        return redirect('/admin/company')
+
+
+
 
 #Show Application form
-@app.route('/apply/<int:job_id>')
+@app.route('/apply/<int:job_id>', methods = ['POST', 'GET'])
 def apply(job_id):
 
-    #request to get job description
+    if request.method == 'GET':
 
-    return render_template('apply.html')
+        #request to get job description
+        cursor = mysql.connection.cursor()
+        sql_update = """SELECT * FROM job WHERE id ="""+ str(job_id)
+        cursor.execute(sql_update)
+        data = cursor.fetchone()
+
+        return render_template('apply.html', job=data)
+
+    if request.method == 'POST':
+        #request to apply to the job
+
+        experience = request.form.get("experience")
+        coverletter = request.form.get("cover_letter")
+        job_id = request.form.get("job_id")
+        #email = request.form.get("email")
+
+        data = (session["username"], int(experience), coverletter, job_id, session["user_id"])
+        print(data)
+        sql_req = """INSERT INTO application (name, experience, cover_letter, job_id, candidate_id) 
+                                    VALUES (%s, %s, %s, %s, %s)"""
+        cursor = mysql.connection.cursor()
+        cursor.execute(sql_req, data)
+        print("=> Inserted")
+
+
+        mysql.connection.commit()
+        cursor.close()
+        #return render_template('application', job=data)
+        return redirect('/admin/my-applications')
 
 #User settings  
 @app.route('/admin/usersettings', methods=['POST','GET'])

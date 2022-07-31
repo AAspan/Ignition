@@ -29,11 +29,11 @@
                 {%for application in applications%} 
 
                 <tr>
-                    <th>{{ application[0] }}</th>
-                    <th>{{ application[1] }}</th>
-                    <th> <a href="{{application[2] }}" target="_blank"  > Open Resume </a></th>
-                    <th>{{ application[3] }} years</th>
-                    <th>{{ application[7] }}</th>
+                    <th>{{ application.candidate_id }}</th>
+                    <th>{{ application.name }}</th>
+                    <th> <a href="{{application.resume}}" target="_blank"  > Open Resume </a></th>
+                    <th>{{ application.experience }} years</th>
+                    <th>{{ application.created_at }}</th>
                 </tr>
 
                 {%endfor%} 
