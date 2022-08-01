@@ -373,7 +373,6 @@ def company():
         result = cursor.fetchall()
         print("Company Defined =>")
         print(result)
-
     return render_template('admin/company.html', applications=result)
 '''
 
