@@ -36,6 +36,6 @@ requests-toolbelt
 rsa
 six
 Werkzeug
-yaml
+#yaml
 flask_mysqldb
 PyYAML
