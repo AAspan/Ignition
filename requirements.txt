@@ -38,3 +38,4 @@ six
 Werkzeug
 yaml
 flask_mysqldb
+PyYAML
