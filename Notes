@@ -1,0 +1,124 @@
+import React, { useState } from 'react';
+import axios from 'axios';
+
+function ObjectData() {
+  const [serialNumber, setSerialNumber] = useState('');
+  const [name, setName] = useState('');
+  const [objectType, setObjectType] = useState('');
+  const [color, setColor] = useState('');
+  const [issuedDate, setIssuedDate] = useState('');
+  const [data, setData] = useState(null);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await axios.get(`/objects?serialNumber=${serialNumber}&name=${name}&objectType=${objectType}&color=${color}&issuedDate=${issuedDate}`);
+      setData(response.data);
+      setError('');
+    } catch (error) {
+      setData(null);
+      setError('Object not found');
+    }
+  };
+
+  return (
+    <div>
+      <h1>Object Data</h1>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Serial Number:
+          <input type="text" value={serialNumber} onChange={(event) => setSerialNumber(event.target.value)} />
+        </label>
+        <label>
+          Name:
+          <input type="text" value={name} onChange={(event) => setName(event.target.value)} />
+        </label>
+        <label>
+          Object Type:
+          <input type="text" value={objectType} onChange={(event) => setObjectType(event.target.value)} />
+        </label>
+        <label>
+          Color:
+          <input type="text" value={color} onChange={(event) => setColor(event.target.value)} />
+        </label>
+        <label>
+          Issued Date:
+          <input type="text" value={issuedDate} onChange={(event) => setIssuedDate(event.target.value)} />
+        </label>
+        <button type="submit">Fetch Data</button>
+      </form>
+      {error && <p>{error}</p>}
+      {data && (
+        <div>
+          <p>Serial Number: {data.serial_number}</p>
+          <p>Name: {data.name}</p>
+          <p>Object Type: {data.object_type}</p>
+          <p>Color: {data.color}</p>
+          <p>Issued Date: {data.issued_date}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default ObjectData;
+
+
+sql code 
+
+const mysql = require('mysql');
+const express = require('express');
+
+const app = express();
+
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: 'password',
+  database: 'mydatabase',
+});
+
+app.get('/objects', (req, res) => {
+  const { serialNumber, name, objectType, color, issuedDate } = req.query;
+  let query = 'SELECT * FROM objects WHERE 1 = 1';
+
+  if (serialNumber) {
+    query += ` AND serial_number = '${serialNumber}'`;
+  }
+  if (name) {
+    query += ` AND name = '${name}'`;
+  }
+  if (objectType) {
+    query += ` AND object_type = '${objectType}'`;
+  }
+  if (color) {
+    query += ` AND color = '${color}'`;
+  }
+  if (issuedDate) {
+    query += ` AND issued_date = '${issuedDate}'`;
+  }
+
+  connection.query(query, (error, results, fields) => {
+    if (error) {
+      res.status(500).json({ message: 'Internal server error' });
+    } else if (results.length === 0) {
+      res.status(404).json({ message: 'Object not found' });
+    } else {
+      const data = results[0];
+      res.json({
+        serial_number: data.serial_number,
+        name: data.name,
+        object_type: data.object_type,
+        color: data.color,
+        issued_date: data.issued_date,
+      });
+    }
+  });
+});
+
+app.listen(3000, () => {
+  console.log('Server started on port 3000');
+});
+
+
